@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.IO.Ports;
 
 namespace EDC21HOST
 {
@@ -15,11 +16,15 @@ namespace EDC21HOST
     {
         private MyFlags _flags;
         private Game _game;
-        public SetWindow(ref MyFlags flags, ref Game game)
+        private SerialPort _serial;
+        private string[] _validPorts;
+        public SetWindow(ref MyFlags flags, ref Game game, ref SerialPort serial, ref string[] validPorts)
         {
             InitializeComponent();
             _flags = flags;
             _game = game;
+            _serial = serial;
+            _validPorts = validPorts;
             nudHue0L.Value = flags.configs.hue0Lower;
             nudHue0H.Value = flags.configs.hue0Upper;
             nudHue1L.Value = flags.configs.hue1Lower;
@@ -32,6 +37,10 @@ namespace EDC21HOST
             nudValueL.Value = flags.configs.valueLower;
             nudAreaL.Value = flags.configs.areaLower;
             checkBox_DebugMode.Checked = game.DebugMode;
+            cbPorts.Items.Clear();
+            foreach (string port in _validPorts)
+                cbPorts.Items.Add(port);
+            cbPorts.Text = _serial.PortName;
         }
 
         private void nudHue0L_ValueChanged(object sender, EventArgs e)
@@ -126,6 +135,19 @@ namespace EDC21HOST
                 nudAreaL.Value = (_flags.configs.areaLower = Convert.ToInt32(str[10]));
                 fsRead.Close();
             }
+        }
+
+        private void cbPorts_TextUpdate(object sender, EventArgs e)
+        {
+            if (_serial != null && _serial.IsOpen)
+            {
+                _serial.Close();
+                _serial.PortName = cbPorts.SelectedText;
+                _serial.Open();
+            }
+            cbPorts.Items.Clear();
+            foreach (string port in _validPorts)
+                cbPorts.Items.Add(port);
         }
     }
 }

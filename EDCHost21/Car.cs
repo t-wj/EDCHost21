@@ -9,6 +9,7 @@ namespace EDC21HOST
     public class Car //选手的车
     {
         public const int PunishScore = 100; //惩罚分数
+        public const double BonusRate = 0.5; //增加总分比例
         public Dot Pos;
         public Camp Who { get; set; } //A or B
         public int Score { get; set; } //当前得分
@@ -17,6 +18,7 @@ namespace EDC21HOST
         public int BallAtOwnCnt; //己方小球数
         public int BallAtOppoCnt; //对方小球数
         public BallState CarryingBall; //抓取小球的状态
+        public bool HaveBonus; //是否增加总分
         public bool UnderStop; //是否正在强制停车
         public int FoulCnt; //惩罚次数
         public void Stop() { UnderStop = true; } //车辆强制停止
@@ -41,6 +43,7 @@ namespace EDC21HOST
             BallAtOppoCnt = 0;
             CarryingBall = BallState.NotCarry;
             UnderStop = false;
+            HaveBonus = false;
             FoulCnt = 0;
         }
     }

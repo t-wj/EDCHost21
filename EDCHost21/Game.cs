@@ -46,17 +46,42 @@ namespace EDC21HOST
         public int CurrPersonNumber; //当前人员数量
         //public static bool[,] GameMap = new bool[MaxSize, MaxSize]; //地图信息
         public FileStream FoulTimeFS;
-        public static byte CarInMaze(Dot dot)//车点是否有效->3*3方格白色大于4
+        public static bool InMaze(Dot dot)
         {
-            //return true;
+            if (InRegion((i, j) => (i >= MazeBorderPoint1 && i <= MazeBorderPoint2 && j >= MazeBorderPoint1 && j <= MazeBorderPoint2), dot))
+                return true;
+            else return false;
+        }
+        public static bool InCollect(Dot dot)
+        {
+            if (InRegion((i, j) => (i <= CollectBound && j <= CollectBound), dot))
+                return true;
+            else return false;
+        }
+        public static bool InStorageA(Dot dot)
+        {
+            if (InRegion((i, j) => (i <= StorageBound && j >= MaxSize - StorageBound), dot))
+                return true;
+            else return false;
+        }
+        public static bool InStorageB(Dot dot)
+        {
+            if (InRegion((i, j) => (j <= StorageBound && i >= MaxSize - StorageBound), dot))
+                return true;
+            else return false;
+        }
+
+        private static bool InRegion(Func<int, int, bool> inRegion, Dot dot)//点是否有效->3*3方格在区域内的格数大于4
+        {
             int count = 0;
             for (int i = ((dot.x - 1 > 0) ? (dot.x - 1) : 0); i <= ((dot.x + 1 < MaxSize) ? (dot.x + 1) : MaxSize - 1); ++i)
                 for (int j = ((dot.y - 1 > 0) ? (dot.y - 1) : 0); j <= ((dot.y + 1 < MaxSize) ? (dot.y + 1) : MaxSize - 1); ++j)
-                    if (i >= MazeBorderPoint1 && i <= MazeBorderPoint2 && j >= MazeBorderPoint1 && j <= MazeBorderPoint2)
+                    if (inRegion(i, j))
                         count++;
-            if (count >= 4) return 1;
-            else return 0;
+            if (count >= 4) return true;
+            else return false;
         }
+
         //public static void LoadMap()//读取地图文件
         //{
         //    //FileStream MapFile = File.OpenRead("../../map/map.bmp");
@@ -205,16 +230,6 @@ namespace EDC21HOST
             }
         }
 
-        public bool InStorageA(Dot pos)
-        {
-            return (pos.x <= StorageBound && pos.y >= MaxSize - StorageBound);
-        }
-
-        public bool InStorageB(Dot pos)
-        {
-            return (pos.y <= StorageBound && pos.x >= MaxSize - StorageBound);
-        }
-
         //更新小球相关操作的状态、得分
         public void UpdateBallsState()
         {
@@ -224,7 +239,7 @@ namespace EDC21HOST
 
             foreach (Dot ball in BallsDot)
             {
-                if (ball.x < CollectBound && ball.y < CollectBound)
+                if (InCollect(ball))
                 {
                     BallAtCollect = ball;
                     NoBallInCollect = false;
@@ -373,17 +388,17 @@ namespace EDC21HOST
             byte[] message = new byte[56]; //上位机传递的信息
             message[0] = (byte)(Round >> 8);
             message[1] = (byte)Round;
-            message[2] = (byte)(((byte)state << 6) | (CarInMaze(CarA.Pos) << 5) | (CarInMaze(CarB.Pos) << 4)
+            message[2] = (byte)(((byte)state << 6) | ((byte)(InMaze(CarA.Pos) ? 1 : 0) << 5) | ((byte)(InMaze(CarB.Pos) ? 1 : 0) << 4)
                 | (CarA.Pos.x >> 5 & 0x08) | (CarA.Pos.y >> 6 & 0x04) | (CarB.Pos.x >> 7 & 0x02) | (CarB.Pos.y >> 8 & 0x01));
             for (int i = 0; i < MaxPersonNum; ++i)
             {
                 message[3] |= (byte)((People[i].StartPos.x & 0x100) >> (2 * i + 1));
                 message[3] |= (byte)((People[i].StartPos.y & 0x100) >> (2 * i + 2));
             }
-            message[4] = (CarInMaze(CarA.Pos) == 0) ? (byte)CarA.Pos.x : (byte)0;
-            message[5] = (CarInMaze(CarA.Pos) == 0) ? (byte)CarA.Pos.y : (byte)0;
-            message[6] = (CarInMaze(CarB.Pos) == 0) ? (byte)CarB.Pos.x : (byte)0;
-            message[7] = (CarInMaze(CarB.Pos) == 0) ? (byte)CarB.Pos.y : (byte)0;
+            message[4] = InMaze(CarA.Pos) ? (byte)CarA.Pos.x : (byte)0;
+            message[5] = InMaze(CarA.Pos) ? (byte)CarA.Pos.y : (byte)0;
+            message[6] = InMaze(CarB.Pos) ? (byte)CarB.Pos.x : (byte)0;
+            message[7] = InMaze(CarB.Pos) ? (byte)CarB.Pos.y : (byte)0;
             for (int i = 0; i < MaxPersonNum; ++i)
             {
                 message[8 + i * 2] = (byte)People[i].StartPos.x;

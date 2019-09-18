@@ -86,12 +86,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CaiNetwork\CaiClient.cs" />
-    <Compile Include="CaiNetwork\CaiReadObject.cs" />
-    <Compile Include="CaiNetwork\CaiReadWriteObject.cs" />
-    <Compile Include="CaiNetwork\CaiServer.cs" />
-    <Compile Include="CaiNetwork\CaiUDP.cs" />
-    <Compile Include="CaiNetwork\util.cs" />
     <Compile Include="Car.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="People.cs" />

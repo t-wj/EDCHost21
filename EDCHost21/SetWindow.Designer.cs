@@ -53,6 +53,8 @@
             this.lblHue0L = new System.Windows.Forms.Label();
             this.nudSat0L = new System.Windows.Forms.NumericUpDown();
             this.lblSat0L = new System.Windows.Forms.Label();
+            this.cbPorts = new System.Windows.Forms.ComboBox();
+            this.lblPort = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudAreaL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudValueL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSat2L)).BeginInit();
@@ -70,7 +72,7 @@
             // 
             this.checkBox_DebugMode.AutoSize = true;
             this.checkBox_DebugMode.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.checkBox_DebugMode.Location = new System.Drawing.Point(286, 286);
+            this.checkBox_DebugMode.Location = new System.Drawing.Point(483, 136);
             this.checkBox_DebugMode.Name = "checkBox_DebugMode";
             this.checkBox_DebugMode.Size = new System.Drawing.Size(91, 24);
             this.checkBox_DebugMode.TabIndex = 74;
@@ -364,11 +366,32 @@
             this.lblSat0L.TabIndex = 97;
             this.lblSat0L.Text = "Sat0L:";
             // 
+            // cbPorts
+            // 
+            this.cbPorts.FormattingEnabled = true;
+            this.cbPorts.Location = new System.Drawing.Point(302, 283);
+            this.cbPorts.Name = "cbPorts";
+            this.cbPorts.Size = new System.Drawing.Size(75, 23);
+            this.cbPorts.TabIndex = 99;
+            this.cbPorts.TextUpdate += new System.EventHandler(this.cbPorts_TextUpdate);
+            // 
+            // lblPort
+            // 
+            this.lblPort.AutoSize = true;
+            this.lblPort.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lblPort.Location = new System.Drawing.Point(237, 283);
+            this.lblPort.Name = "lblPort";
+            this.lblPort.Size = new System.Drawing.Size(44, 20);
+            this.lblPort.TabIndex = 100;
+            this.lblPort.Text = "Port:";
+            // 
             // SetWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(626, 345);
+            this.Controls.Add(this.lblPort);
+            this.Controls.Add(this.cbPorts);
             this.Controls.Add(this.nudSat0L);
             this.Controls.Add(this.lblSat0L);
             this.Controls.Add(this.nudHue0H);
@@ -439,5 +462,7 @@
         private System.Windows.Forms.Label lblHue0L;
         private System.Windows.Forms.NumericUpDown nudSat0L;
         private System.Windows.Forms.Label lblSat0L;
+        private System.Windows.Forms.ComboBox cbPorts;
+        private System.Windows.Forms.Label lblPort;
     }
 }

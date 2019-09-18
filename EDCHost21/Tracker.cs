@@ -17,6 +17,7 @@ using Point2i = OpenCvSharp.Point;
 using Cuda = OpenCvSharp.Cuda;
 
 using System.Net;
+using System.IO.Ports;
 
 namespace EDC21HOST
 {
@@ -36,8 +37,8 @@ namespace EDC21HOST
         private Game game;
         private VideoWriter vw = null;
 
-        private CaiNetwork.CaiServer server;
-        private CaiNetwork.CaiUDP udp;
+        private SerialPort serial;
+        private string[] validPorts;
 
         private string[] gametext = { "上半场", "下半场", "加时1", "加时2",
             "加时3", "加时4", "加时5", "加时6", "加时7" , "加时8", "加时9", "加时10", "加时11", "加时12"};
@@ -77,11 +78,6 @@ namespace EDC21HOST
             labelBScore.Location = new System.Drawing.Point(newX, newY);
             label_GameCount.Text = "上半场";
 
-            InitialCaiServer();
-            MessageBox.Show("TCP IP is "+ server.getUsedIP().ToString()+"  port is "+ server.getPort().ToString());
-            udp = new CaiNetwork.CaiUDP();
-            MessageBox.Show("UDP IP is " + udp.broadcastIpEndPoint.Address.ToString() + "  port is " + udp.broadcastIpEndPoint.Port.ToString());
-
             // Init
             flags = new MyFlags();
             flags.Init();
@@ -105,8 +101,16 @@ namespace EDC21HOST
 
             buttonStart.Enabled = true;
             buttonPause.Enabled = false;
+            buttonEnd.Enabled = false;
             button_AReset.Enabled = false;
             button_BReset.Enabled = false;
+
+            validPorts = SerialPort.GetPortNames();
+            if (validPorts.Any())
+            {
+                serial = new SerialPort(validPorts[0], 115200, Parity.None, 8, StopBits.One);
+                serial.Open();
+            }
 
             //Game.LoadMap();
             game = new Game();
@@ -149,8 +153,10 @@ namespace EDC21HOST
             }
             byte[] Message = game.PackMessage();
             label_CountDown.Text = Convert.ToString(game.Round);
-            CaiZhuo_SendBytesViaNet(Message);
+            if (serial != null && serial.IsOpen)
+                serial.Write(Message, 0, 56);
             ShowMessage(Message);
+            validPorts = SerialPort.GetPortNames();
         }
 
         private void CameraReading()
@@ -225,24 +231,8 @@ namespace EDC21HOST
             pbCamera.Image = img;
         }
 
-        private void InitialCaiServer()
-        {
-            server = new CaiNetwork.CaiServer(CaiNetwork.util.getIPV4());//不指定端口，CaiServer会自行寻找空闲的端口；由util自动寻找本机的IPV4地址
-            /*
-             * 如果需要知道使用的IP和端口
-             * 可以调用server.getUsedIP(),server.getPort()
-             */
-        }
-
-        private void CaiZhuo_SendBytesViaNet(byte[] Message)
-        {
-            server.GroupSend(Message);
-            udp.sendByte(Message);
-        }
-
         private void Tracker_FormClosed(object sender, FormClosedEventArgs e)
         {
-            server.DisconnectAll();
             lock (flags)
             {
                 flags.End();
@@ -250,6 +240,8 @@ namespace EDC21HOST
             timer100ms.Stop();
             //threadCamera.Join();
             capture.Release();
+            if (serial != null && serial.IsOpen)
+                serial.Close();
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -302,6 +294,7 @@ namespace EDC21HOST
         {
             game.Start();
             buttonPause.Enabled = true;
+            buttonEnd.Enabled = true;
             buttonStart.Enabled = false;
             button_AReset.Enabled = true;
             button_BReset.Enabled = true;
@@ -311,6 +304,7 @@ namespace EDC21HOST
         {
             game.Pause();
             buttonPause.Enabled = false;
+            buttonEnd.Enabled = true;
             buttonStart.Enabled = true;
             button_AReset.Enabled = false;
             button_BReset.Enabled = false;
@@ -333,6 +327,10 @@ namespace EDC21HOST
 
             label_AMessage.Text = $"接到人员数　　{game.CarA.PersonCnt}\n抓取物资数　　{game.CarA.BallGetCnt}\n运至己方物资　{game.CarA.BallAtOwnCnt}\n运至对方物资　{game.CarA.BallAtOppoCnt}";
             label_BMessage.Text = $"{game.CarB.PersonCnt}　　接到人员数\n{game.CarB.BallGetCnt}　　抓取物资数\n{game.CarB.BallAtOwnCnt}　运至己方物资\n{game.CarB.BallAtOppoCnt}　运至对方物资";
+            if (game.CarA.HaveBonus)
+                label_CarA.Text = "+" + Car.BonusRate.ToString("0%") + "  " + label_CarA.Text;
+            if (game.CarB.HaveBonus)
+                label_CarB.Text = label_CarB.Text + "  +" + Car.BonusRate.ToString("0%");
             //  groupBox_Person.Refresh();
         }
 
@@ -341,6 +339,7 @@ namespace EDC21HOST
             lock (game) { game = new Game(); }
             buttonStart.Enabled = true;
             buttonPause.Enabled = false;
+            buttonEnd.Enabled = false;
             button_AReset.Enabled = false;
             button_BReset.Enabled = false;
         }
@@ -390,6 +389,7 @@ namespace EDC21HOST
             {
                 game.AskPause(Camp.CampA);
                 buttonPause.Enabled = false;
+                buttonEnd.Enabled = false;
                 buttonStart.Enabled = true;
                 button_AReset.Enabled = false;
                 button_BReset.Enabled = false;
@@ -402,6 +402,7 @@ namespace EDC21HOST
             {
                 game.AskPause(Camp.CampB);
                 buttonPause.Enabled = false;
+                buttonEnd.Enabled = false;
                 buttonStart.Enabled = true;
                 button_AReset.Enabled = false;
                 button_BReset.Enabled = false;
@@ -412,7 +413,7 @@ namespace EDC21HOST
         {
             lock (flags)
             {
-                SetWindow st = new SetWindow(ref flags, ref game);
+                SetWindow st = new SetWindow(ref flags, ref game, ref serial, ref validPorts);
                 st.Show();
             }
         }
@@ -459,6 +460,7 @@ namespace EDC21HOST
             //if (game.state == GameState.End)
             game.nextStage();
             buttonPause.Enabled = false;
+            buttonEnd.Enabled = true;
             buttonStart.Enabled = true;
             button_AReset.Enabled = false;
             button_BReset.Enabled = false;
@@ -505,6 +507,32 @@ namespace EDC21HOST
             {
                 byte[] data = Encoding.Default.GetBytes($"B -50 {game.Round}\r\n");
                 game.FoulTimeFS.Write(data, 0, data.Length);
+            }
+        }
+
+        private void buttonEnd_Click(object sender, EventArgs e)
+        {
+            game.End();
+            buttonStart.Enabled = true;
+            buttonPause.Enabled = false;
+            buttonEnd.Enabled = false;
+            button_AReset.Enabled = false;
+            button_BReset.Enabled = false;
+
+            //结算分数
+            if (game.CarA.PersonCnt > 0
+                && (game.CarA.BallAtOwnCnt > 0 && Game.InStorageA(game.CarA.Pos)
+                || game.CarA.BallAtOppoCnt > 0 && Game.InStorageB(game.CarA.Pos)))
+            {
+                game.addScore(Camp.CampA, (int)(game.CarA.Score * Car.BonusRate));
+                game.CarA.HaveBonus = true;
+            }
+            if (game.CarB.PersonCnt > 0
+                && (game.CarB.BallAtOwnCnt > 0 && Game.InStorageB(game.CarB.Pos)
+                || game.CarB.BallAtOppoCnt > 0 && Game.InStorageA(game.CarB.Pos)))
+            {
+                game.addScore(Camp.CampB, (int)(game.CarB.Score * Car.BonusRate));
+                game.CarB.HaveBonus = true;
             }
         }
 
