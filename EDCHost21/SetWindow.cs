@@ -40,7 +40,8 @@ namespace EDC21HOST
             cbPorts.Items.Clear();
             foreach (string port in _validPorts)
                 cbPorts.Items.Add(port);
-            cbPorts.Text = _serial.PortName;
+            if (_serial != null && _serial.IsOpen)
+                cbPorts.Text = _serial.PortName;
         }
 
         private void nudHue0L_ValueChanged(object sender, EventArgs e)
@@ -139,15 +140,25 @@ namespace EDC21HOST
 
         private void cbPorts_TextUpdate(object sender, EventArgs e)
         {
-            if (_serial != null && _serial.IsOpen)
+
+        }
+
+        private void cbPorts_TextChanged(object sender, EventArgs e)
+        {
+            try
             {
-                _serial.Close();
-                _serial.PortName = cbPorts.SelectedText;
+                if (_serial != null && _serial.IsOpen)
+                    _serial.Close();
+                _serial.PortName = cbPorts.Text;
                 _serial.Open();
             }
-            cbPorts.Items.Clear();
-            foreach (string port in _validPorts)
-                cbPorts.Items.Add(port);
+            catch (UnauthorizedAccessException)
+            {
+
+            }
+            //cbPorts.Items.Clear();
+            //foreach (string port in _validPorts)
+            //    cbPorts.Items.Add(port);
         }
     }
 }

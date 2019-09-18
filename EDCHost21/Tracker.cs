@@ -106,10 +106,17 @@ namespace EDC21HOST
             button_BReset.Enabled = false;
 
             validPorts = SerialPort.GetPortNames();
-            if (validPorts.Any())
+            try
             {
-                serial = new SerialPort(validPorts[0], 115200, Parity.None, 8, StopBits.One);
-                serial.Open();
+                if (validPorts.Any())
+                {
+                    serial = new SerialPort(validPorts[0], 115200, Parity.None, 8, StopBits.One);
+                    serial.Open();
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+
             }
 
             //Game.LoadMap();

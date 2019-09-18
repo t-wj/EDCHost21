@@ -368,12 +368,13 @@
             // 
             // cbPorts
             // 
+            this.cbPorts.Font = new System.Drawing.Font("微软雅黑", 9F);
             this.cbPorts.FormattingEnabled = true;
-            this.cbPorts.Location = new System.Drawing.Point(302, 283);
+            this.cbPorts.Location = new System.Drawing.Point(302, 280);
             this.cbPorts.Name = "cbPorts";
-            this.cbPorts.Size = new System.Drawing.Size(75, 23);
+            this.cbPorts.Size = new System.Drawing.Size(75, 28);
             this.cbPorts.TabIndex = 99;
-            this.cbPorts.TextUpdate += new System.EventHandler(this.cbPorts_TextUpdate);
+            this.cbPorts.TextChanged += new System.EventHandler(this.cbPorts_TextChanged);
             // 
             // lblPort
             // 
