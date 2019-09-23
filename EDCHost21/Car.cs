@@ -19,6 +19,7 @@ namespace EDC21HOST
         public int BallAtOppoCnt; //对方小球数
         public bool HaveBonus; //是否增加总分
         public bool UnderStop; //是否正在强制停车
+        public int LastGetBallRound; //上一次拿球时间
         public int FoulCnt; //惩罚次数
         public void Stop() { UnderStop = true; } //车辆强制停止
         public void Start() { UnderStop = false; } //从强制停止中恢复
@@ -43,6 +44,7 @@ namespace EDC21HOST
             UnderStop = false;
             HaveBonus = false;
             FoulCnt = 0;
+            LastGetBallRound = 0;
         }
     }
 }

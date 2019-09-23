@@ -21,6 +21,7 @@ namespace EDC21HOST
         public const int MaxCarryDistance = 10; //接上人员的最大距离
         public const int MaxCarBallDistance = 30; //拿到小球的最大距离
         public const int MinBallSept = 6; //小球最小可分辨距离
+        public const int MinGetBallRound = 30; //小车取球的最小时间间隔
         public const int CollectBound = 36;
         public const int StorageBound = 43;
         public const int PersonGetScore = 15;
@@ -152,6 +153,8 @@ namespace EDC21HOST
                 MaxRound = 1200;
             Round = 0;
             State = GameState.Unstart;
+            CarA.LastGetBallRound = 0;
+            CarB.LastGetBallRound = 0;
             InitialPerson();
             DebugMode = false;
             if (FoulTimeFS != null)
@@ -161,7 +164,7 @@ namespace EDC21HOST
             }
         }
 
-        protected void InitialPerson()//初始化人员
+        protected void InitialPerson() //初始化人员
         {
             Generator = new PersonGenerator();
             Generator.Generate(100);
@@ -206,12 +209,16 @@ namespace EDC21HOST
         public void Start() //开始比赛
         {
             State = GameState.Normal;
+            CarA.LastGetBallRound = 0;
+            CarB.LastGetBallRound = 0;
             CarA.Start();
             CarB.Start();
         }
         public void Pause() //暂停比赛
         {
             State = GameState.Pause;
+            CarA.LastGetBallRound = 0;
+            CarB.LastGetBallRound = 0;
             CarA.Stop();
             CarB.Stop();
         }
@@ -274,10 +281,23 @@ namespace EDC21HOST
             {
                 switch (CollectCamp)
                 {
-                    case Camp.CampA: AddScore(Camp.CampA, BallGetScore); CollectCamp = Camp.None; break;
-                    case Camp.CampB: AddScore(Camp.CampB, BallGetScore); CollectCamp = Camp.None; break;
+                    case Camp.CampA:
+                        if (Round - CarA.LastGetBallRound > MinGetBallRound)
+                        {
+                            CarA.LastGetBallRound = Round;
+                            AddScore(Camp.CampA, BallGetScore);
+                        }
+                        break;
+                    case Camp.CampB:
+                        if (Round - CarB.LastGetBallRound > MinGetBallRound)
+                        {
+                            CarB.LastGetBallRound = Round;
+                            AddScore(Camp.CampB, BallGetScore);
+                        }
+                        break;
                     default: break; 
                 }
+                CollectCamp = Camp.None;
             }
 
             //小球运输至存放点计分
