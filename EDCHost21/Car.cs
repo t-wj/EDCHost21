@@ -17,7 +17,6 @@ namespace EDC21HOST
         public int BallGetCnt; //抓取小球数
         public int BallAtOwnCnt; //己方小球数
         public int BallAtOppoCnt; //对方小球数
-        public BallState CarryingBall; //抓取小球的状态
         public bool HaveBonus; //是否增加总分
         public bool UnderStop; //是否正在强制停车
         public int FoulCnt; //惩罚次数
@@ -41,7 +40,6 @@ namespace EDC21HOST
             BallGetCnt = 0;
             BallAtOwnCnt = 0;
             BallAtOppoCnt = 0;
-            CarryingBall = BallState.NotCarry;
             UnderStop = false;
             HaveBonus = false;
             FoulCnt = 0;

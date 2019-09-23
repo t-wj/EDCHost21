@@ -9,7 +9,6 @@ using System.Drawing;
 namespace EDC21HOST
 {
     public enum GameState { Unstart = 0, Normal = 1, Pause = 2, End = 3 };
-    public enum BallState { NotCarry = 0, Carry, GetScore };
     public class Game
     {
         public bool DebugMode; //调试模式，最大回合数 = 1,000,000
@@ -21,13 +20,14 @@ namespace EDC21HOST
         public const int MazeBorderPoint2 = MazeBorderPoint1 + MazeCrossDist * (1 + MazeCrossNum);
         public const int MaxCarryDistance = 10; //接上人员的最大距离
         public const int MaxCarBallDistance = 30; //拿到小球的最大距离
-        public const int MinBallSept = 8; //小球最小可分辨距离
+        public const int MinBallSept = 6; //小球最小可分辨距离
         public const int CollectBound = 36;
         public const int StorageBound = 43;
         public const int PersonGetScore = 15;
         public const int BallGetScore = 10;
         public const int BallOwnScore = 10;
         public const int BallOppoScore = 5;
+
         public int APauseNum = 0;
         public int BPauseNum = 0;
         public int AFoul1 = 0;
@@ -37,11 +37,14 @@ namespace EDC21HOST
         public int MaxRound;  //最大回合数
         public int GameCount; //上下半场、加时等
         public int Round { get; set; }//当前回合
-        public GameState state { get; set; }
+        public GameState State { get; set; }
         public Car CarA, CarB;
         public Person[] People;
+        public bool RequestNewBall; //当前是否需要新球
+        public Camp CollectCamp; //物资收集点处为A车或B车
         public List<Dot> BallsDot; //小球位置
         public Dot BallAtCollect; //物资收集点处的小球位置
+        public int BallCntA, BallCntB; //物资存放点处小球个数
         public PersonGenerator Generator { get; set; }
         public int CurrPersonNumber; //当前人员数量
         //public static bool[,] GameMap = new bool[MaxSize, MaxSize]; //地图信息
@@ -127,17 +130,20 @@ namespace EDC21HOST
             MaxRound = 1200;
             BallsDot = new List<Dot>();
             BallAtCollect = new Dot(0, 0);
+            RequestNewBall = false;
+            BallCntA = BallCntB = 0;
+            CollectCamp = Camp.None;
             CarA = new Car(Camp.CampA);
             CarB = new Car(Camp.CampB);
             People = new Person[MaxPersonNum];
             Round = 0;
-            state = GameState.Unstart;
+            State = GameState.Unstart;
             InitialPerson();
             DebugMode = false;
             FoulTimeFS = null;
         }
 
-        public void nextStage()
+        public void NextStage()
         {
             ++GameCount;
             if (GameCount >= 3)
@@ -145,7 +151,7 @@ namespace EDC21HOST
             else
                 MaxRound = 1200;
             Round = 0;
-            state = GameState.Unstart;
+            State = GameState.Unstart;
             InitialPerson();
             DebugMode = false;
             if (FoulTimeFS != null)
@@ -181,7 +187,7 @@ namespace EDC21HOST
         }
 
         //增加分数
-        public void addScore(Camp c, int score)
+        public void AddScore(Camp c, int score)
         {
             switch (c)
             {
@@ -199,19 +205,19 @@ namespace EDC21HOST
 
         public void Start() //开始比赛
         {
-            state = GameState.Normal;
+            State = GameState.Normal;
             CarA.Start();
             CarB.Start();
         }
         public void Pause() //暂停比赛
         {
-            state = GameState.Pause;
+            State = GameState.Pause;
             CarA.Stop();
             CarB.Stop();
         }
         public void End() //结束比赛
         {
-            state = GameState.End;
+            State = GameState.End;
         }
         //复位
         public void AskPause(Camp c)
@@ -233,119 +239,69 @@ namespace EDC21HOST
         //更新小球相关操作的状态、得分
         public void UpdateBallsState()
         {
-            double ballDistanceA = 1000, ballDistanceB = 1000;
-            bool currCarryingBallA = false, currCarryingBallB = false;
-            bool NoBallInCollect = true;
-
+            bool noBallInCollect = true;
+            int currBallCntA = 0, currBallCntB = 0;
+            BallAtCollect = new Dot(0, 0);
             foreach (Dot ball in BallsDot)
             {
                 if (InCollect(ball))
                 {
                     BallAtCollect = ball;
-                    NoBallInCollect = false;
+                    noBallInCollect = false;
                 }
-                if (GetDistance(ball, CarA.Pos) < MaxCarBallDistance)
-                {
-                    currCarryingBallA = true;
-                }
-                if (GetDistance(ball, CarB.Pos) < MaxCarBallDistance)
-                {
-                    currCarryingBallB = true;
-                }
+                else if (InStorageA(ball)) currBallCntA++;
+                else if (InStorageB(ball)) currBallCntB++;
             }
-            //Console.WriteLine($"{CarA.CarryingBall}, {currCarryingBallA}, {BallAtCollect.x}, {BallAtCollect.y}, {NoBallInCollect}");
 
-            if (!NoBallInCollect && GetDistance(BallAtCollect, CarA.Pos) < MaxCarBallDistance)
+            //更新CollectCamp：物资收集点处是A车还是B车
+            if (InCollect(CarA.Pos) && InCollect(CarB.Pos))
             {
-                if (CarA.CarryingBall == BallState.NotCarry)
-                {
-                    CarA.CarryingBall = BallState.Carry;
-                    ballDistanceA = GetDistance(BallAtCollect, CarA.Pos);
-                }
+                if (GetDistance(CarA.Pos, BallAtCollect) < GetDistance(CarB.Pos, BallAtCollect)) //若物资收集点处没有球，则BallAtCollect为(0, 0)
+                    CollectCamp = Camp.CampA;
+                else
+                    CollectCamp = Camp.CampB;
             }
-            if (!NoBallInCollect && GetDistance(BallAtCollect, CarB.Pos) < MaxCarBallDistance)
+            else if (InCollect(CarA.Pos))
+                CollectCamp = Camp.CampA;
+            else if (InCollect(CarB.Pos))
+                CollectCamp = Camp.CampB;
+            //else：不更新
+
+            RequestNewBall = noBallInCollect && !InCollect(CarA.Pos) && !InCollect(CarB.Pos); //物资收集点处没有车和球时才可请求新球
+            
+            //抓取到小球计分
+            if (RequestNewBall) 
             {
-                if (CarB.CarryingBall == BallState.NotCarry)
+                switch (CollectCamp)
                 {
-                    CarB.CarryingBall = BallState.Carry;
-                    ballDistanceB = GetDistance(BallAtCollect, CarB.Pos);
+                    case Camp.CampA: AddScore(Camp.CampA, BallGetScore); CollectCamp = Camp.None; break;
+                    case Camp.CampB: AddScore(Camp.CampB, BallGetScore); CollectCamp = Camp.None; break;
+                    default: break; 
                 }
             }
 
             //小球运输至存放点计分
-            if (!currCarryingBallA)
+            if (currBallCntA == BallCntA + 1)
             {
-                if (CarA.CarryingBall == BallState.GetScore)
-                {
-                    if (InStorageA(CarA.Pos))
-                    {
-                        addScore(Camp.CampA, BallOwnScore);
-                        CarA.BallAtOwnCnt++;
-                    }
-                    else if (InStorageB(CarA.Pos))
-                    {
-                        addScore(Camp.CampA, BallOppoScore);
-                        CarA.BallAtOppoCnt++;
-                    }
-                }
-                CarA.CarryingBall = BallState.NotCarry;
-            }
-            if (!currCarryingBallB)
-            {
-                if (CarB.CarryingBall == BallState.GetScore)
-                {
-                    if (InStorageB(CarB.Pos))
-                    {
-                        addScore(Camp.CampB, BallOwnScore);
-                        CarB.BallAtOwnCnt++;
-                    }
-                    else if (InStorageA(CarB.Pos))
-                    {
-                        addScore(Camp.CampB, BallOppoScore);
-                        CarB.BallAtOppoCnt++;
-                    }
-                }
-                CarB.CarryingBall = BallState.NotCarry;
+                BallCntA++;
+                if (GetDistance(CarA.Pos, new Dot(0, MaxSize)) < GetDistance(CarB.Pos, new Dot(0, MaxSize)))
+                    AddScore(Camp.CampA, BallOwnScore);
+                else
+                    AddScore(Camp.CampB, BallOppoScore);
             }
 
-            //抓取到小球计分
-            if (NoBallInCollect)
+            if (currBallCntB == BallCntB + 1)
             {
-                BallAtCollect = new Dot(0, 0);
-                if (CarA.CarryingBall == BallState.Carry && CarB.CarryingBall != BallState.Carry)
-                {
-                    CarA.CarryingBall = BallState.GetScore;
-                    addScore(Camp.CampA, BallGetScore);
-                    CarA.BallGetCnt++;
-                }
-                else if (CarA.CarryingBall != BallState.Carry && CarB.CarryingBall == BallState.Carry)
-                {
-                    CarB.CarryingBall = BallState.GetScore;
-                    addScore(Camp.CampB, BallGetScore);
-                    CarB.BallGetCnt++;
-                }
-                else if (CarA.CarryingBall == BallState.Carry && CarB.CarryingBall == BallState.Carry)
-                {
-                    if (ballDistanceA < ballDistanceB)
-                    {
-                        CarA.CarryingBall = BallState.GetScore;
-                        CarB.CarryingBall = BallState.NotCarry;
-                        addScore(Camp.CampA, BallGetScore);
-                        CarA.BallGetCnt++;
-                    }
-                    else
-                    {
-                        CarB.CarryingBall = BallState.GetScore;
-                        CarA.CarryingBall = BallState.NotCarry;
-                        addScore(Camp.CampB, BallGetScore);
-                        CarB.BallGetCnt++;
-                    }
-                }
+                BallCntB++;
+                if (GetDistance(CarA.Pos, new Dot(MaxSize, 0)) < GetDistance(CarB.Pos, new Dot(MaxSize, 0)))
+                    AddScore(Camp.CampA, BallOppoScore);
+                else
+                    AddScore(Camp.CampB, BallOwnScore);
             }
         }
         public void Update()//每回合执行
         {
-            if (state == GameState.Normal)
+            if (State == GameState.Normal)
             {
                 Round++;
                 //GetInfoFromCameraAndUpdate();
@@ -362,14 +318,14 @@ namespace EDC21HOST
                     Person p = People[i];
                     if (CarA.UnderStop == false && GetDistance(p.StartPos, CarA.Pos) < MaxCarryDistance)
                     {
-                        addScore(Camp.CampA, PersonGetScore);
+                        AddScore(Camp.CampA, PersonGetScore);
                         CarA.PersonCnt++;
                         NewPerson(p.StartPos, i);
                     }
 
                     if (CarB.UnderStop == false && GetDistance(p.StartPos, CarB.Pos) < MaxCarryDistance)
                     {
-                        addScore(Camp.CampB, PersonGetScore);
+                        AddScore(Camp.CampB, PersonGetScore);
                         CarB.PersonCnt++;
                         NewPerson(p.StartPos, i);
                     }
@@ -388,7 +344,7 @@ namespace EDC21HOST
             byte[] message = new byte[56]; //上位机传递的信息
             message[0] = (byte)(Round >> 8);
             message[1] = (byte)Round;
-            message[2] = (byte)(((byte)state << 6) | ((byte)(InMaze(CarA.Pos) ? 1 : 0) << 5) | ((byte)(InMaze(CarB.Pos) ? 1 : 0) << 4)
+            message[2] = (byte)(((byte)State << 6) | ((byte)(InMaze(CarA.Pos) ? 1 : 0) << 5) | ((byte)(InMaze(CarB.Pos) ? 1 : 0) << 4)
                 | (CarA.Pos.x >> 5 & 0x08) | (CarA.Pos.y >> 6 & 0x04) | (CarB.Pos.x >> 7 & 0x02) | (CarB.Pos.y >> 8 & 0x01));
             for (int i = 0; i < MaxPersonNum; ++i)
             {

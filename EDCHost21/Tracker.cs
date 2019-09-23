@@ -155,7 +155,7 @@ namespace EDC21HOST
                 {
                     flags.posPersonStart[i].X = game.People[i].StartPos.x;
                     flags.posPersonStart[i].Y = game.People[i].StartPos.y;
-                    flags.gameState = game.state;
+                    flags.gameState = game.State;
                 }
             }
             byte[] Message = game.PackMessage();
@@ -427,13 +427,13 @@ namespace EDC21HOST
 
         private void numericUpDownScoreA_ValueChanged(object sender, EventArgs e)
         {
-            game.addScore(Camp.CampA, (int)((NumericUpDown)sender).Value);
+            game.AddScore(Camp.CampA, (int)((NumericUpDown)sender).Value);
             ((NumericUpDown)sender).Value = 0;
         }
 
         private void numericUpDownScoreB_ValueChanged(object sender, EventArgs e)
         {
-            game.addScore(Camp.CampB, (int)((NumericUpDown)sender).Value);
+            game.AddScore(Camp.CampB, (int)((NumericUpDown)sender).Value);
             ((NumericUpDown)sender).Value = 0;
         }
 
@@ -465,7 +465,7 @@ namespace EDC21HOST
         private void button_Continue_Click(object sender, EventArgs e)
         {
             //if (game.state == GameState.End)
-            game.nextStage();
+            game.NextStage();
             buttonPause.Enabled = false;
             buttonEnd.Enabled = true;
             buttonStart.Enabled = true;
@@ -476,7 +476,7 @@ namespace EDC21HOST
         private void button_AFoul1_Click(object sender, EventArgs e)
         {
             game.AFoul1++;
-            game.addScore(Camp.CampA, -10);
+            game.AddScore(Camp.CampA, -10);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"A -10 {game.Round}\r\n");
@@ -487,7 +487,7 @@ namespace EDC21HOST
         private void button_AFoul2_Click(object sender, EventArgs e)
         {
             game.AFoul2++;
-            game.addScore(Camp.CampA, -50);
+            game.AddScore(Camp.CampA, -50);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"A -50 {game.Round}\r\n");
@@ -498,7 +498,7 @@ namespace EDC21HOST
         private void button_BFoul1_Click(object sender, EventArgs e)
         {
             game.BFoul1++;
-            game.addScore(Camp.CampB, -10);
+            game.AddScore(Camp.CampB, -10);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"B -10 {game.Round}\r\n");
@@ -509,7 +509,7 @@ namespace EDC21HOST
         private void button_BFoul2_Click(object sender, EventArgs e)
         {
             game.BFoul2++;
-            game.addScore(Camp.CampB, -50);
+            game.AddScore(Camp.CampB, -50);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"B -50 {game.Round}\r\n");
@@ -531,14 +531,14 @@ namespace EDC21HOST
                 && (game.CarA.BallAtOwnCnt > 0 && Game.InStorageA(game.CarA.Pos)
                 || game.CarA.BallAtOppoCnt > 0 && Game.InStorageB(game.CarA.Pos)))
             {
-                game.addScore(Camp.CampA, (int)(game.CarA.Score * Car.BonusRate));
+                game.AddScore(Camp.CampA, (int)(game.CarA.Score * Car.BonusRate));
                 game.CarA.HaveBonus = true;
             }
             if (game.CarB.PersonCnt > 0
                 && (game.CarB.BallAtOwnCnt > 0 && Game.InStorageB(game.CarB.Pos)
                 || game.CarB.BallAtOppoCnt > 0 && Game.InStorageA(game.CarB.Pos)))
             {
-                game.addScore(Camp.CampB, (int)(game.CarB.Score * Car.BonusRate));
+                game.AddScore(Camp.CampB, (int)(game.CarB.Score * Car.BonusRate));
                 game.CarB.HaveBonus = true;
             }
         }
