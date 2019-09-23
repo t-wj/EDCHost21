@@ -21,7 +21,7 @@ namespace EDC21HOST
         public const int MaxCarryDistance = 10; //接上人员的最大距离
         public const int MaxCarBallDistance = 30; //拿到小球的最大距离
         public const int MinBallSept = 6; //小球最小可分辨距离
-        public const int MinGetBallRound = 30; //小车取球的最小时间间隔
+        public const int MinGetBallRound = 300; //小车取球的最小时间间隔
         public const int CollectBound = 36;
         public const int StorageBound = 43;
         public const int PersonGetScore = 15;
