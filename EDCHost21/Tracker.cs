@@ -129,7 +129,7 @@ namespace EDC21HOST
                 capture.ConvertRgb = true;
                 timer100ms.Interval = 75;
                 timer100ms.Start();
-                //Cv2.NamedWindow("binary");
+                Cv2.NamedWindow("Debug");
             }
 
         }
@@ -206,15 +206,9 @@ namespace EDC21HOST
                                 flags.posCarB = car2;
                             }
                             Point2i[] posBallsI = new Point2i[posBallsF.Length];
+                            flags.posBalls = new Point2i[posBallsF.Length];
                             for (int i = 0; i < posBallsF.Length; ++i)
-                                posBallsI[i] = posBallsF[i];
-                            List<Point2i> posBallsList = new List<Point2i>();
-                            foreach (Point2i b in posBallsI)
-                            {
-                                if (!posBallsList.Any(bb => b.DistanceTo(bb) < Game.MinBallSept))
-                                    posBallsList.Add(b);
-                            }
-                            flags.posBalls = posBallsList.ToArray();
+                                flags.posBalls[i] = posBallsF[i];
                         }
                         timeCamNow = DateTime.Now;
                         TimeSpan timeProcess = timeCamNow - timeCamPrev;
@@ -818,7 +812,7 @@ namespace EDC21HOST
             using (Mat car1 = new Mat())
             using (Mat car2 = new Mat())
             //using (Mat merged = new Mat())
-            using (Mat black = new Mat(mat.Size(), MatType.CV_8UC1))
+            //using (Mat gray = new Mat(mat.Size(), MatType.CV_8UC1))
             {
                 Cv2.CvtColor(mat, hsv, ColorConversionCodes.RGB2HSV);
                 MyFlags.LocConfigs configs = localiseFlags.configs;
@@ -871,6 +865,16 @@ namespace EDC21HOST
                     if (area <= configs.areaLower) continue;
                     centres2.Add(centre);
                 }
+                Mat gray = new Mat(mat.Size(), MatType.CV_8UC1);
+                //Cv2.CvtColor(mat, gray, ColorConversionCodes.RGB2GRAY);
+                gray = mat.Split()[2];
+                Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(9, 9), 2, 2);
+                Cv2.ImShow("Debug", gray);
+                CircleSegment[] circles;
+                circles = Cv2.HoughCircles(gray, HoughMethods.Gradient, 2, Game.MinBallSept * 5, 20, Game.MinBallSept * 16, 1, 50);
+                Console.WriteLine(circles.Length);
+                foreach (CircleSegment c0 in circles) Cv2.Circle(mat, (int)c0.Center.X, (int)c0.Center.Y, (int)c0.Radius, new Scalar(0x1b, 0xa7, 0xff), -1);
+
 
                 foreach (Point2i c0 in centres0) Cv2.Circle(mat, c0, 1, new Scalar(0x1b, 0xa7, 0xff), -1);
                 foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x1b, 0xff, 0xa7), -1);
