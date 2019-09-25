@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.IO.Ports;
+using OpenCvSharp;
 
 namespace EDC21HOST
 {
@@ -16,15 +17,13 @@ namespace EDC21HOST
     {
         private MyFlags _flags;
         private Game _game;
-        private SerialPort _serial;
-        private string[] _validPorts;
-        public SetWindow(ref MyFlags flags, ref Game game, ref SerialPort serial, ref string[] validPorts)
+        private Tracker _tracker;
+        public SetWindow(ref MyFlags flags, ref Game game, Tracker tracker)
         {
             InitializeComponent();
             _flags = flags;
             _game = game;
-            _serial = serial;
-            _validPorts = validPorts;
+            _tracker = tracker;
             nudHue0L.Value = flags.configs.hue0Lower;
             nudHue0H.Value = flags.configs.hue0Upper;
             nudHue1L.Value = flags.configs.hue1Lower;
@@ -38,10 +37,10 @@ namespace EDC21HOST
             nudAreaL.Value = flags.configs.areaLower;
             checkBox_DebugMode.Checked = game.DebugMode;
             cbPorts.Items.Clear();
-            foreach (string port in _validPorts)
+            foreach (string port in _tracker.validPorts)
                 cbPorts.Items.Add(port);
-            if (_serial != null && _serial.IsOpen)
-                cbPorts.Text = _serial.PortName;
+            if (_tracker.serial != null && _tracker.serial.IsOpen)
+                cbPorts.Text = _tracker.serial.PortName;
         }
 
         private void nudHue0L_ValueChanged(object sender, EventArgs e)
@@ -147,18 +146,29 @@ namespace EDC21HOST
         {
             try
             {
-                if (_serial != null && _serial.IsOpen)
-                    _serial.Close();
-                _serial.PortName = cbPorts.Text;
-                _serial.Open();
+                if (_tracker.serial != null && _tracker.serial.IsOpen)
+                    _tracker.serial.Close();
+                _tracker.serial.PortName = cbPorts.Text;
+                _tracker.serial.Open();
             }
             catch (UnauthorizedAccessException)
             {
 
             }
-            //cbPorts.Items.Clear();
-            //foreach (string port in _validPorts)
-            //    cbPorts.Items.Add(port);
+        }
+
+        private void nudCapture_ValueChanged(object sender, EventArgs e)
+        {
+            if (_tracker.capture.IsOpened())
+                _tracker.capture.Release();
+            _tracker.capture = new VideoCapture();
+            _tracker.capture.Open((int)nudCapture.Value);
+            if (_tracker.capture.IsOpened())
+            {
+                _tracker.flags.cameraSize.Width = _tracker.capture.FrameWidth;
+                _tracker.flags.cameraSize.Height = _tracker.capture.FrameHeight;
+                _tracker.cc = new CoordinateConverter(_tracker.flags);
+            }
         }
     }
 }

@@ -15,8 +15,8 @@ namespace EDC21HOST
         public int Score { get; set; } //当前得分
         public int PersonCnt; //人员数
         public int BallGetCnt; //抓取小球数
-        public int BallAtOwnCnt; //己方小球数
-        public int BallAtOppoCnt; //对方小球数
+        public int BallOwnCnt; //己方小球数
+        public int BallOppoCnt; //对方小球数
         public bool HaveBonus; //是否增加总分
         public bool UnderStop; //是否正在强制停车
         public int LastGetBallRound; //上一次拿球时间
@@ -39,12 +39,12 @@ namespace EDC21HOST
             Score = 0;
             PersonCnt = 0;
             BallGetCnt = 0;
-            BallAtOwnCnt = 0;
-            BallAtOppoCnt = 0;
+            BallOwnCnt = 0;
+            BallOppoCnt = 0;
             UnderStop = false;
             HaveBonus = false;
             FoulCnt = 0;
-            LastGetBallRound = 0;
+            LastGetBallRound = -Game.MinGetBallRound;
         }
     }
 }

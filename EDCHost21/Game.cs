@@ -153,8 +153,8 @@ namespace EDC21HOST
                 MaxRound = 1200;
             Round = 0;
             State = GameState.Unstart;
-            CarA.LastGetBallRound = 0;
-            CarB.LastGetBallRound = 0;
+            CarA.LastGetBallRound = -MinGetBallRound;
+            CarB.LastGetBallRound = -MinGetBallRound;
             InitialPerson();
             DebugMode = false;
             if (FoulTimeFS != null)
@@ -209,16 +209,16 @@ namespace EDC21HOST
         public void Start() //开始比赛
         {
             State = GameState.Normal;
-            CarA.LastGetBallRound = 0;
-            CarB.LastGetBallRound = 0;
+            CarA.LastGetBallRound = -MinGetBallRound;
+            CarB.LastGetBallRound = -MinGetBallRound;
             CarA.Start();
             CarB.Start();
         }
         public void Pause() //暂停比赛
         {
             State = GameState.Pause;
-            CarA.LastGetBallRound = 0;
-            CarB.LastGetBallRound = 0;
+            CarA.LastGetBallRound = -MinGetBallRound;
+            CarB.LastGetBallRound = -MinGetBallRound;
             CarA.Stop();
             CarB.Stop();
         }
@@ -286,6 +286,7 @@ namespace EDC21HOST
                         {
                             CarA.LastGetBallRound = Round;
                             AddScore(Camp.CampA, BallGetScore);
+                            CarA.BallGetCnt++;
                         }
                         break;
                     case Camp.CampB:
@@ -293,6 +294,7 @@ namespace EDC21HOST
                         {
                             CarB.LastGetBallRound = Round;
                             AddScore(Camp.CampB, BallGetScore);
+                            CarB.BallGetCnt++;
                         }
                         break;
                     default: break; 
@@ -305,18 +307,30 @@ namespace EDC21HOST
             {
                 BallCntA++;
                 if (GetDistance(CarA.Pos, new Dot(0, MaxSize)) < GetDistance(CarB.Pos, new Dot(0, MaxSize)))
+                {
                     AddScore(Camp.CampA, BallOwnScore);
+                    CarA.BallOwnCnt++;
+                }
                 else
+                {
                     AddScore(Camp.CampB, BallOppoScore);
+                    CarB.BallOppoCnt++;
+                }
             }
 
             if (currBallCntB == BallCntB + 1)
             {
                 BallCntB++;
                 if (GetDistance(CarA.Pos, new Dot(MaxSize, 0)) < GetDistance(CarB.Pos, new Dot(MaxSize, 0)))
+                {
                     AddScore(Camp.CampA, BallOppoScore);
+                    CarA.BallOppoCnt++;
+                }
                 else
+                {
                     AddScore(Camp.CampB, BallOwnScore);
+                    CarB.BallOwnCnt++;
+                }
             }
         }
         public void Update()//每回合执行
@@ -390,10 +404,10 @@ namespace EDC21HOST
             message[23] = (byte)CarB.PersonCnt;
             message[24] = (byte)CarA.BallGetCnt;
             message[25] = (byte)CarB.BallGetCnt;
-            message[26] = (byte)CarA.BallAtOwnCnt;
-            message[27] = (byte)CarA.BallAtOppoCnt;
-            message[28] = (byte)CarB.BallAtOwnCnt;
-            message[29] = (byte)CarB.BallAtOppoCnt;
+            message[26] = (byte)CarA.BallOwnCnt;
+            message[27] = (byte)CarA.BallOppoCnt;
+            message[28] = (byte)CarB.BallOwnCnt;
+            message[29] = (byte)CarB.BallOppoCnt;
             message[54] = 0x0D;
             message[55] = 0x0A;
             return message;

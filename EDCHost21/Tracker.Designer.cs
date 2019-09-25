@@ -39,8 +39,6 @@
             this.label_CarA = new System.Windows.Forms.Label();
             this.label_CarB = new System.Windows.Forms.Label();
             this.button_restart = new System.Windows.Forms.Button();
-            this.numericUpDownScoreA = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownScoreB = new System.Windows.Forms.NumericUpDown();
             this.button_video = new System.Windows.Forms.Button();
             this.button_BReset = new System.Windows.Forms.Button();
             this.button_AReset = new System.Windows.Forms.Button();
@@ -67,8 +65,6 @@
             this.label_AMessage = new System.Windows.Forms.Label();
             this.buttonEnd = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScoreA)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScoreB)).BeginInit();
             this.SuspendLayout();
             // 
             // pbCamera
@@ -164,59 +160,6 @@
             this.button_restart.Text = "新游戏";
             this.button_restart.UseVisualStyleBackColor = true;
             this.button_restart.Click += new System.EventHandler(this.button_restart_Click);
-            // 
-            // numericUpDownScoreA
-            // 
-            this.numericUpDownScoreA.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.numericUpDownScoreA.Font = new System.Drawing.Font("微软雅黑", 15F);
-            this.numericUpDownScoreA.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericUpDownScoreA.Location = new System.Drawing.Point(89, 581);
-            this.numericUpDownScoreA.Margin = new System.Windows.Forms.Padding(2);
-            this.numericUpDownScoreA.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.numericUpDownScoreA.Minimum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDownScoreA.Name = "numericUpDownScoreA";
-            this.numericUpDownScoreA.Size = new System.Drawing.Size(96, 40);
-            this.numericUpDownScoreA.TabIndex = 57;
-            this.numericUpDownScoreA.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.numericUpDownScoreA.ValueChanged += new System.EventHandler(this.numericUpDownScoreA_ValueChanged);
-            // 
-            // numericUpDownScoreB
-            // 
-            this.numericUpDownScoreB.Font = new System.Drawing.Font("微软雅黑", 15F);
-            this.numericUpDownScoreB.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericUpDownScoreB.Location = new System.Drawing.Point(1749, 581);
-            this.numericUpDownScoreB.Margin = new System.Windows.Forms.Padding(2);
-            this.numericUpDownScoreB.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.numericUpDownScoreB.Minimum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDownScoreB.Name = "numericUpDownScoreB";
-            this.numericUpDownScoreB.Size = new System.Drawing.Size(96, 40);
-            this.numericUpDownScoreB.TabIndex = 58;
-            this.numericUpDownScoreB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.numericUpDownScoreB.ValueChanged += new System.EventHandler(this.numericUpDownScoreB_ValueChanged);
             // 
             // button_video
             // 
@@ -557,7 +500,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(1902, 1033);
+            this.ClientSize = new System.Drawing.Size(1924, 1055);
             this.Controls.Add(this.buttonEnd);
             this.Controls.Add(this.label_AMessage);
             this.Controls.Add(this.label_BMessage);
@@ -581,8 +524,6 @@
             this.Controls.Add(this.button_video);
             this.Controls.Add(this.button_BFoul2);
             this.Controls.Add(this.button_BFoul1);
-            this.Controls.Add(this.numericUpDownScoreB);
-            this.Controls.Add(this.numericUpDownScoreA);
             this.Controls.Add(this.button_restart);
             this.Controls.Add(this.labelBScore);
             this.Controls.Add(this.labelAScore);
@@ -599,8 +540,6 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Tracker_FormClosed);
             this.Load += new System.EventHandler(this.Tracker_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScoreA)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScoreB)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -615,8 +554,6 @@
         private System.Windows.Forms.Label label_CarA;
         private System.Windows.Forms.Label label_CarB;
         private System.Windows.Forms.Button button_restart;
-        private System.Windows.Forms.NumericUpDown numericUpDownScoreA;
-        private System.Windows.Forms.NumericUpDown numericUpDownScoreB;
         private System.Windows.Forms.Button button_video;
         private System.Windows.Forms.Button button_BReset;
         private System.Windows.Forms.Button button_AReset;

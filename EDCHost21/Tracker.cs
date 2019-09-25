@@ -23,13 +23,13 @@ namespace EDC21HOST
 {
     public partial class Tracker : Form
     {
-        private MyFlags flags = null;
-        private VideoCapture capture = null;
+        public MyFlags flags = null;
+        public VideoCapture capture = null;
         //private Thread threadCamera = null;
         private Point2f[] ptsShowCorners = null;
         private DateTime timeCamNow;
         private DateTime timeCamPrev;
-        private CoordinateConverter cc;
+        public CoordinateConverter cc;
         private Localiser localiser;
         private Point2f[] ball;
         private Point2i car1;
@@ -37,8 +37,8 @@ namespace EDC21HOST
         private Game game;
         private VideoWriter vw = null;
 
-        private SerialPort serial;
-        private string[] validPorts;
+        public SerialPort serial;
+        public string[] validPorts;
 
         private string[] gametext = { "上半场", "下半场", "加时1", "加时2",
             "加时3", "加时4", "加时5", "加时6", "加时7" , "加时8", "加时9", "加时10", "加时11", "加时12"};
@@ -63,7 +63,7 @@ namespace EDC21HOST
         {
             InitializeComponent();
             //UI
-            
+
             label_RedBG.SendToBack();
             label_BlueBG.SendToBack();
             label_RedBG.Controls.Add(label_CarA);
@@ -129,12 +129,12 @@ namespace EDC21HOST
                 capture.ConvertRgb = true;
                 timer100ms.Interval = 75;
                 timer100ms.Start();
-                Cv2.NamedWindow("Debug");
+                //Cv2.NamedWindow("binary");
             }
 
         }
 
-        private void Flush() 
+        private void Flush()
         {
             CameraReading();
             lock (flags)
@@ -148,7 +148,7 @@ namespace EDC21HOST
                 game.CarB.Pos.y = flags.posCarB.Y;
             }
             game.Update();
-            lock(flags)
+            lock (flags)
             {
                 flags.currPersonNum = game.CurrPersonNumber;
                 for (int i = 0; i != Game.MaxPersonNum; ++i)
@@ -206,9 +206,15 @@ namespace EDC21HOST
                                 flags.posCarB = car2;
                             }
                             Point2i[] posBallsI = new Point2i[posBallsF.Length];
-                            flags.posBalls = new Point2i[posBallsF.Length];
                             for (int i = 0; i < posBallsF.Length; ++i)
-                                flags.posBalls[i] = posBallsF[i];
+                                posBallsI[i] = posBallsF[i];
+                            List<Point2i> posBallsList = new List<Point2i>();
+                            foreach (Point2i b in posBallsI)
+                            {
+                                if (!posBallsList.Any(bb => b.DistanceTo(bb) < Game.MinBallSept))
+                                    posBallsList.Add(b);
+                            }
+                            flags.posBalls = posBallsList.ToArray();
                         }
                         timeCamNow = DateTime.Now;
                         TimeSpan timeProcess = timeCamNow - timeCamPrev;
@@ -247,7 +253,7 @@ namespace EDC21HOST
 
         private void btnReset_Click(object sender, EventArgs e)
         {
-            lock(flags)
+            lock (flags)
             {
                 flags.clickCount = 0;
                 flags.calibrated = false;
@@ -313,7 +319,7 @@ namespace EDC21HOST
 
         private void ShowMessage(byte[] M) //通过Message显示信息到UI上
         {
-            label_CountDown.Text = $"{(game.MaxRound-game.Round)/600}:{((game.MaxRound - game.Round) / 10)%60/10}{((game.MaxRound - game.Round) / 10) % 60 % 10}";
+            label_CountDown.Text = $"{(game.MaxRound - game.Round) / 600}:{((game.MaxRound - game.Round) / 10) % 60 / 10}{((game.MaxRound - game.Round) / 10) % 60 % 10}";
 
             labelAScore.Text = $"{game.CarA.Score}";
             labelBScore.Text = $"{game.CarB.Score}";
@@ -326,8 +332,8 @@ namespace EDC21HOST
             label_AFoul2Num.Text = $"{game.AFoul2}";
             label_BFoul2Num.Text = $"{game.BFoul2}";
 
-            label_AMessage.Text = $"接到人员数　　{game.CarA.PersonCnt}\n抓取物资数　　{game.CarA.BallGetCnt}\n运至己方物资　{game.CarA.BallAtOwnCnt}\n运至对方物资　{game.CarA.BallAtOppoCnt}";
-            label_BMessage.Text = $"{game.CarB.PersonCnt}　　接到人员数\n{game.CarB.BallGetCnt}　　抓取物资数\n{game.CarB.BallAtOwnCnt}　运至己方物资\n{game.CarB.BallAtOppoCnt}　运至对方物资";
+            label_AMessage.Text = $"接到人员数　　{game.CarA.PersonCnt}\n抓取物资数　　{game.CarA.BallGetCnt}\n运至己方物资　{game.CarA.BallOwnCnt}\n运至对方物资　{game.CarA.BallOppoCnt}";
+            label_BMessage.Text = $"{game.CarB.PersonCnt}　　接到人员数\n{game.CarB.BallGetCnt}　　抓取物资数\n{game.CarB.BallOwnCnt}　运至己方物资\n{game.CarB.BallOppoCnt}　运至对方物资";
             if (game.CarA.HaveBonus)
                 label_CarA.Text = "+" + Car.BonusRate.ToString("0%") + "  " + label_CarA.Text;
             if (game.CarB.HaveBonus)
@@ -343,20 +349,22 @@ namespace EDC21HOST
             buttonEnd.Enabled = false;
             button_AReset.Enabled = false;
             button_BReset.Enabled = false;
+            label_CarA.Text = "A车";
+            label_CarB.Text = "B车";
         }
 
-        private void buttonChangeScore_Click(object sender, EventArgs e)
-        {
-            int AScore = (int)numericUpDownScoreA.Value;
-            int BScore = (int)numericUpDownScoreB.Value;
-            numericUpDownScoreA.Value = 0;
-            numericUpDownScoreB.Value = 0;
-            lock(game)
-            {
-                game.CarA.Score += AScore;
-                game.CarB.Score += BScore;
-            }
-        }
+        //private void buttonChangeScore_Click(object sender, EventArgs e)
+        //{
+        //    int AScore = (int)numericUpDownScoreA.Value;
+        //    int BScore = (int)numericUpDownScoreB.Value;
+        //    numericUpDownScoreA.Value = 0;
+        //    numericUpDownScoreB.Value = 0;
+        //    lock (game)
+        //    {
+        //        game.CarA.Score += AScore;
+        //        game.CarB.Score += BScore;
+        //    }
+        //}
 
 
 
@@ -414,7 +422,7 @@ namespace EDC21HOST
         {
             lock (flags)
             {
-                SetWindow st = new SetWindow(ref flags, ref game, ref serial, ref validPorts);
+                SetWindow st = new SetWindow(ref flags, ref game, this);
                 st.Show();
             }
         }
@@ -522,15 +530,15 @@ namespace EDC21HOST
 
             //结算分数
             if (game.CarA.PersonCnt > 0
-                && (game.CarA.BallAtOwnCnt > 0 && Game.InStorageA(game.CarA.Pos)
-                || game.CarA.BallAtOppoCnt > 0 && Game.InStorageB(game.CarA.Pos)))
+                && (game.CarA.BallOwnCnt > 0 && Game.InStorageA(game.CarA.Pos)
+                || game.CarA.BallOppoCnt > 0 && Game.InStorageB(game.CarA.Pos)))
             {
                 game.AddScore(Camp.CampA, (int)(game.CarA.Score * Car.BonusRate));
                 game.CarA.HaveBonus = true;
             }
             if (game.CarB.PersonCnt > 0
-                && (game.CarB.BallAtOwnCnt > 0 && Game.InStorageB(game.CarB.Pos)
-                || game.CarB.BallAtOppoCnt > 0 && Game.InStorageA(game.CarB.Pos)))
+                && (game.CarB.BallOwnCnt > 0 && Game.InStorageB(game.CarB.Pos)
+                || game.CarB.BallOppoCnt > 0 && Game.InStorageA(game.CarB.Pos)))
             {
                 game.AddScore(Camp.CampB, (int)(game.CarB.Score * Car.BonusRate));
                 game.CarB.HaveBonus = true;
@@ -757,7 +765,7 @@ namespace EDC21HOST
 
             for (int i = 0; i < flags.currPersonNum; ++i)
             {
-                Point2f[] res = LogicToCamera(new Point2f[]{flags.posPersonStart[i]});
+                Point2f[] res = LogicToCamera(new Point2f[] { flags.posPersonStart[i] });
                 flags.posPersonStart[i] = res[0];
             }
         }
@@ -774,7 +782,7 @@ namespace EDC21HOST
             centres0 = new List<Point2i>();
             centres1 = new List<Point2i>();
             centres2 = new List<Point2i>();
-            
+
         }
 
         public void GetLocations(out Point2f[] pts0, out Point2i pt1, out Point2i pt2)
@@ -782,11 +790,11 @@ namespace EDC21HOST
             List<Point2f> ptsList0 = new List<Point2f>();
             if (centres0.Count != 0)
             {
-                foreach(Point2i c0 in centres0)
+                foreach (Point2i c0 in centres0)
                     ptsList0.Add(c0);
                 centres0.Clear();
             }
-            else ptsList0.Add(new Point2f(-1,-1));
+            else ptsList0.Add(new Point2f(-1, -1));
             pts0 = ptsList0.ToArray();
 
             if (centres1.Count != 0)
@@ -794,7 +802,7 @@ namespace EDC21HOST
                 pt1 = centres1[0];
                 centres1.Clear();
             }
-            else pt1 = new Point2i(-1,-1);
+            else pt1 = new Point2i(-1, -1);
             if (centres2.Count != 0)
             {
                 pt2 = centres2[0];
@@ -812,7 +820,7 @@ namespace EDC21HOST
             using (Mat car1 = new Mat())
             using (Mat car2 = new Mat())
             //using (Mat merged = new Mat())
-            //using (Mat gray = new Mat(mat.Size(), MatType.CV_8UC1))
+            using (Mat black = new Mat(mat.Size(), MatType.CV_8UC1))
             {
                 Cv2.CvtColor(mat, hsv, ColorConversionCodes.RGB2HSV);
                 MyFlags.LocConfigs configs = localiseFlags.configs;
@@ -865,16 +873,6 @@ namespace EDC21HOST
                     if (area <= configs.areaLower) continue;
                     centres2.Add(centre);
                 }
-                Mat gray = new Mat(mat.Size(), MatType.CV_8UC1);
-                //Cv2.CvtColor(mat, gray, ColorConversionCodes.RGB2GRAY);
-                gray = mat.Split()[2];
-                Cv2.GaussianBlur(gray, gray, new OpenCvSharp.Size(9, 9), 2, 2);
-                Cv2.ImShow("Debug", gray);
-                CircleSegment[] circles;
-                circles = Cv2.HoughCircles(gray, HoughMethods.Gradient, 2, Game.MinBallSept * 5, 20, Game.MinBallSept * 16, 1, 50);
-                Console.WriteLine(circles.Length);
-                foreach (CircleSegment c0 in circles) Cv2.Circle(mat, (int)c0.Center.X, (int)c0.Center.Y, (int)c0.Radius, new Scalar(0x1b, 0xa7, 0xff), -1);
-
 
                 foreach (Point2i c0 in centres0) Cv2.Circle(mat, c0, 1, new Scalar(0x1b, 0xa7, 0xff), -1);
                 foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x1b, 0xff, 0xa7), -1);
