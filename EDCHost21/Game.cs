@@ -248,7 +248,7 @@ namespace EDC21HOST
         {
             bool noBallInCollect = true;
             int currBallCntA = 0, currBallCntB = 0;
-            BallAtCollect = new Dot(0, 0);
+            //BallAtCollect = new Dot(0, 0);
             foreach (Dot ball in BallsDot)
             {
                 if (InCollect(ball))
@@ -263,7 +263,7 @@ namespace EDC21HOST
             //更新CollectCamp：物资收集点处是A车还是B车
             if (InCollect(CarA.Pos) && InCollect(CarB.Pos))
             {
-                if (GetDistance(CarA.Pos, BallAtCollect) < GetDistance(CarB.Pos, BallAtCollect)) //若物资收集点处没有球，则BallAtCollect为(0, 0)
+                if (GetDistance(CarA.Pos, BallAtCollect) < GetDistance(CarB.Pos, BallAtCollect)) //若物资收集点处没有球，则BallAtCollect为前一次的位置
                     CollectCamp = Camp.CampA;
                 else
                     CollectCamp = Camp.CampB;
@@ -370,8 +370,6 @@ namespace EDC21HOST
                     End();
                 }
             }
-            //byte[] message = PackMessage();
-            //SendMessage
         } 
         public byte[] PackMessage()
         {
@@ -385,10 +383,10 @@ namespace EDC21HOST
                 message[3] |= (byte)((People[i].StartPos.x & 0x100) >> (2 * i + 1));
                 message[3] |= (byte)((People[i].StartPos.y & 0x100) >> (2 * i + 2));
             }
-            message[4] = InMaze(CarA.Pos) ? (byte)CarA.Pos.x : (byte)0;
-            message[5] = InMaze(CarA.Pos) ? (byte)CarA.Pos.y : (byte)0;
-            message[6] = InMaze(CarB.Pos) ? (byte)CarB.Pos.x : (byte)0;
-            message[7] = InMaze(CarB.Pos) ? (byte)CarB.Pos.y : (byte)0;
+            message[4] = !InMaze(CarA.Pos) ? (byte)CarA.Pos.x : (byte)0;
+            message[5] = !InMaze(CarA.Pos) ? (byte)CarA.Pos.y : (byte)0;
+            message[6] = !InMaze(CarB.Pos) ? (byte)CarB.Pos.x : (byte)0;
+            message[7] = !InMaze(CarB.Pos) ? (byte)CarB.Pos.y : (byte)0;
             for (int i = 0; i < MaxPersonNum; ++i)
             {
                 message[8 + i * 2] = (byte)People[i].StartPos.x;
