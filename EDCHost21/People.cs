@@ -56,8 +56,12 @@ namespace EDC21HOST
             Random NRand = new Random();
             for (int i = 0; i != amount; ++i)
             {
-                nextX = NRand.Next(Game.MazeCrossNum);
-                nextY = NRand.Next(Game.MazeCrossNum);
+                do
+                {
+                    nextX = NRand.Next(Game.MazeCrossNum);
+                    nextY = NRand.Next(Game.MazeCrossNum);
+                }
+                while (nextX < nextY); //保证人员出现在左上
                 dots = CrossNo2Dot(nextX, nextY);
                 PersonDotStack.Push(dots);
             }

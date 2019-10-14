@@ -19,7 +19,11 @@ namespace EDC21HOST
         public int BallOppoCnt; //对方小球数
         public bool HaveBonus; //是否增加总分
         public bool UnderStop; //是否正在强制停车
-        public int LastGetBallRound; //上一次拿球时间
+        public int LastInCollectRound; //上一次进入物资收集点时间
+        public Dot MazeEntryPos; //进入迷宫的位置
+        public bool InMaze; //是否进入迷宫
+        public bool HaveBall; //是否正在推球
+        public bool FinishedMaze; //是否已经完成穿过迷宫任务
         public int FoulCnt; //惩罚次数
         public void Stop() { UnderStop = true; } //车辆强制停止
         public void Start() { UnderStop = false; } //从强制停止中恢复
@@ -43,8 +47,12 @@ namespace EDC21HOST
             BallOppoCnt = 0;
             UnderStop = false;
             HaveBonus = false;
+            HaveBall = false;
+            FinishedMaze = false;
+            MazeEntryPos = new Dot(0, 0);
+            InMaze = false;
             FoulCnt = 0;
-            LastGetBallRound = -Game.MinGetBallRound;
+            LastInCollectRound = -Game.MinGetBallRound;
         }
     }
 }

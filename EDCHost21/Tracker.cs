@@ -332,12 +332,12 @@ namespace EDC21HOST
             label_AFoul2Num.Text = $"{game.AFoul2}";
             label_BFoul2Num.Text = $"{game.BFoul2}";
 
-            label_AMessage.Text = $"接到人员数　　{game.CarA.PersonCnt}\n抓取物资数　　{game.CarA.BallGetCnt}\n运至己方物资　{game.CarA.BallOwnCnt}\n运至对方物资　{game.CarA.BallOppoCnt}";
-            label_BMessage.Text = $"{game.CarB.PersonCnt}　　接到人员数\n{game.CarB.BallGetCnt}　　抓取物资数\n{game.CarB.BallOwnCnt}　运至己方物资\n{game.CarB.BallOppoCnt}　运至对方物资";
-            if (game.CarA.HaveBonus)
-                label_CarA.Text = "+" + Car.BonusRate.ToString("0%") + "  " + label_CarA.Text;
-            if (game.CarB.HaveBonus)
-                label_CarB.Text = label_CarB.Text + "  +" + Car.BonusRate.ToString("0%");
+            label_AMessage.Text = $"接到人员数　　{game.CarA.PersonCnt}\n抓取物资数　　{game.CarA.BallGetCnt}\n运回物资数　　{game.CarA.BallOwnCnt}";
+            label_BMessage.Text = $"{game.CarB.PersonCnt}　　接到人员数\n{game.CarB.BallGetCnt}　　抓取物资数\n{game.CarB.BallOwnCnt}　　运回物资数";
+            //if (game.CarA.HaveBonus)
+            //    label_CarA.Text = "+" + Car.BonusRate.ToString("0%") + "  " + label_CarA.Text;
+            //if (game.CarB.HaveBonus)
+            //    label_CarB.Text = label_CarB.Text + "  +" + Car.BonusRate.ToString("0%");
             //  groupBox_Person.Refresh();
         }
 
@@ -427,17 +427,17 @@ namespace EDC21HOST
             }
         }
 
-        private void numericUpDownScoreA_ValueChanged(object sender, EventArgs e)
-        {
-            game.AddScore(Camp.CampA, (int)((NumericUpDown)sender).Value);
-            ((NumericUpDown)sender).Value = 0;
-        }
+        //private void numericUpDownScoreA_ValueChanged(object sender, EventArgs e)
+        //{
+        //    game.AddScore(Camp.CampA, (int)((NumericUpDown)sender).Value);
+        //    ((NumericUpDown)sender).Value = 0;
+        //}
 
-        private void numericUpDownScoreB_ValueChanged(object sender, EventArgs e)
-        {
-            game.AddScore(Camp.CampB, (int)((NumericUpDown)sender).Value);
-            ((NumericUpDown)sender).Value = 0;
-        }
+        //private void numericUpDownScoreB_ValueChanged(object sender, EventArgs e)
+        //{
+        //    game.AddScore(Camp.CampB, (int)((NumericUpDown)sender).Value);
+        //    ((NumericUpDown)sender).Value = 0;
+        //}
 
         private void Tracker_Load(object sender, EventArgs e)
         {
@@ -478,7 +478,7 @@ namespace EDC21HOST
         private void button_AFoul1_Click(object sender, EventArgs e)
         {
             game.AFoul1++;
-            game.AddScore(Camp.CampA, -10);
+            game.AddScore(Camp.CampA, Score.Foul1);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"A -10 {game.Round}\r\n");
@@ -489,7 +489,7 @@ namespace EDC21HOST
         private void button_AFoul2_Click(object sender, EventArgs e)
         {
             game.AFoul2++;
-            game.AddScore(Camp.CampA, -50);
+            game.AddScore(Camp.CampA, Score.Foul2);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"A -50 {game.Round}\r\n");
@@ -500,7 +500,7 @@ namespace EDC21HOST
         private void button_BFoul1_Click(object sender, EventArgs e)
         {
             game.BFoul1++;
-            game.AddScore(Camp.CampB, -10);
+            game.AddScore(Camp.CampB, Score.Foul1);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"B -10 {game.Round}\r\n");
@@ -511,7 +511,7 @@ namespace EDC21HOST
         private void button_BFoul2_Click(object sender, EventArgs e)
         {
             game.BFoul2++;
-            game.AddScore(Camp.CampB, -50);
+            game.AddScore(Camp.CampB, Score.Foul2);
             if (game.FoulTimeFS != null)
             {
                 byte[] data = Encoding.Default.GetBytes($"B -50 {game.Round}\r\n");
@@ -527,22 +527,6 @@ namespace EDC21HOST
             buttonEnd.Enabled = false;
             button_AReset.Enabled = false;
             button_BReset.Enabled = false;
-
-            //结算分数
-            if (game.CarA.PersonCnt > 0
-                && (game.CarA.BallOwnCnt > 0 && Game.InStorageA(game.CarA.Pos)
-                || game.CarA.BallOppoCnt > 0 && Game.InStorageB(game.CarA.Pos)))
-            {
-                game.AddScore(Camp.CampA, (int)(game.CarA.Score * Car.BonusRate));
-                game.CarA.HaveBonus = true;
-            }
-            if (game.CarB.PersonCnt > 0
-                && (game.CarB.BallOwnCnt > 0 && Game.InStorageB(game.CarB.Pos)
-                || game.CarB.BallOppoCnt > 0 && Game.InStorageA(game.CarB.Pos)))
-            {
-                game.AddScore(Camp.CampB, (int)(game.CarB.Score * Car.BonusRate));
-                game.CarB.HaveBonus = true;
-            }
         }
 
         ////绘制人员信息
