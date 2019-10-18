@@ -159,12 +159,13 @@ namespace EDC21HOST
 
         private void nudCapture_ValueChanged(object sender, EventArgs e)
         {
-            if (_tracker.capture.IsOpened())
-                _tracker.capture.Release();
-            _tracker.capture = new VideoCapture();
-            _tracker.capture.Open((int)nudCapture.Value);
-            if (_tracker.capture.IsOpened())
+            VideoCapture tmpCamture = new VideoCapture((int)nudCapture.Value);
+            if (tmpCamture.IsOpened() && tmpCamture.FrameWidth > 0 && tmpCamture.FrameHeight > 0) 
             {
+                tmpCamture.Release();
+                if (_tracker.capture.IsOpened())
+                    _tracker.capture.Release();
+                _tracker.capture.Open((int)nudCapture.Value);
                 _tracker.flags.cameraSize.Width = _tracker.capture.FrameWidth;
                 _tracker.flags.cameraSize.Height = _tracker.capture.FrameHeight;
                 _tracker.cc = new CoordinateConverter(_tracker.flags);

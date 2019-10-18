@@ -353,14 +353,20 @@ namespace EDC21HOST
                 switch (CollectCamp)
                 {
                     case Camp.CampA:
-                        AddScore(Camp.CampA, Score.BallGetScore);
-                        CarA.BallGetCnt++;
-                        CarA.HaveBall = true;
+                        if (!CarA.HaveBall)
+                        {
+                            AddScore(Camp.CampA, Score.BallGetScore);
+                            CarA.BallGetCnt++;
+                            CarA.HaveBall = true;
+                        }
                         break;
                     case Camp.CampB:
-                        AddScore(Camp.CampB, Score.BallGetScore);
-                        CarB.BallGetCnt++;
-                        CarB.HaveBall = true;
+                        if (!CarB.HaveBall)
+                        {
+                            AddScore(Camp.CampB, Score.BallGetScore);
+                            CarB.BallGetCnt++;
+                            CarB.HaveBall = true;
+                        }
                         break;
                     default: break; 
                 }
