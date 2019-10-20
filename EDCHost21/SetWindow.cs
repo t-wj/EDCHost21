@@ -41,6 +41,8 @@ namespace EDC21HOST
                 cbPorts.Items.Add(port);
             if (_tracker.serial != null && _tracker.serial.IsOpen)
                 cbPorts.Text = _tracker.serial.PortName;
+
+            BringToFront();
         }
 
         private void nudHue0L_ValueChanged(object sender, EventArgs e)
@@ -170,6 +172,16 @@ namespace EDC21HOST
                 _tracker.flags.cameraSize.Height = _tracker.capture.FrameHeight;
                 _tracker.cc = new CoordinateConverter(_tracker.flags);
             }
+        }
+
+        private void SetWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _tracker.flags.showMask = false;
+        }
+
+        private void checkBox_ShowMask_CheckedChanged(object sender, EventArgs e)
+        {
+            _tracker.flags.showMask = checkBox_ShowMask.Checked;
         }
     }
 }

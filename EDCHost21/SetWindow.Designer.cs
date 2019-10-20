@@ -57,6 +57,7 @@
             this.lblPort = new System.Windows.Forms.Label();
             this.lblCapture = new System.Windows.Forms.Label();
             this.nudCapture = new System.Windows.Forms.NumericUpDown();
+            this.checkBox_ShowMask = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudAreaL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudValueL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSat2L)).BeginInit();
@@ -75,7 +76,7 @@
             // 
             this.checkBox_DebugMode.AutoSize = true;
             this.checkBox_DebugMode.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.checkBox_DebugMode.Location = new System.Drawing.Point(499, 137);
+            this.checkBox_DebugMode.Location = new System.Drawing.Point(499, 286);
             this.checkBox_DebugMode.Name = "checkBox_DebugMode";
             this.checkBox_DebugMode.Size = new System.Drawing.Size(91, 24);
             this.checkBox_DebugMode.TabIndex = 74;
@@ -413,11 +414,24 @@
             this.nudCapture.TabIndex = 103;
             this.nudCapture.ValueChanged += new System.EventHandler(this.nudCapture_ValueChanged);
             // 
+            // checkBox_ShowMask
+            // 
+            this.checkBox_ShowMask.AutoSize = true;
+            this.checkBox_ShowMask.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.checkBox_ShowMask.Location = new System.Drawing.Point(256, 286);
+            this.checkBox_ShowMask.Name = "checkBox_ShowMask";
+            this.checkBox_ShowMask.Size = new System.Drawing.Size(121, 24);
+            this.checkBox_ShowMask.TabIndex = 104;
+            this.checkBox_ShowMask.Text = "显示识别蒙版";
+            this.checkBox_ShowMask.UseVisualStyleBackColor = true;
+            this.checkBox_ShowMask.CheckedChanged += new System.EventHandler(this.checkBox_ShowMask_CheckedChanged);
+            // 
             // SetWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(626, 345);
+            this.Controls.Add(this.checkBox_ShowMask);
             this.Controls.Add(this.nudCapture);
             this.Controls.Add(this.lblCapture);
             this.Controls.Add(this.lblPort);
@@ -449,6 +463,7 @@
             this.Controls.Add(this.checkBox_DebugMode);
             this.Name = "SetWindow";
             this.Text = "SetWindow";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SetWindow_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.nudAreaL)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudValueL)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSat2L)).EndInit();
@@ -497,5 +512,6 @@
         private System.Windows.Forms.Label lblPort;
         private System.Windows.Forms.Label lblCapture;
         private System.Windows.Forms.NumericUpDown nudCapture;
+        private System.Windows.Forms.CheckBox checkBox_ShowMask;
     }
 }

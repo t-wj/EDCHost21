@@ -567,6 +567,7 @@ namespace EDC21HOST
 
     public class MyFlags
     {
+        public bool showMask; //调试颜色识别
         public bool running;
         public bool calibrated;
         public bool videomode;
@@ -599,6 +600,7 @@ namespace EDC21HOST
 
         public void Init()
         {
+            showMask = false;
             running = false;
             calibrated = false;
             videomode = false;
@@ -820,6 +822,17 @@ namespace EDC21HOST
                     new Scalar(configs.hue2Lower, configs.saturation2Lower, configs.valueLower),
                     new Scalar(configs.hue2Upper, 255, 255),
                     car2);
+
+                if (localiseFlags.showMask)
+                {
+                    Cv2.ImShow("Ball", ball);
+                    Cv2.ImShow("CarA", car1);
+                    Cv2.ImShow("CarB", car2);
+                }
+                else
+                {
+                    Cv2.DestroyAllWindows();
+                }
 
                 Point2i[][] contours0, contours1, contours2;
 

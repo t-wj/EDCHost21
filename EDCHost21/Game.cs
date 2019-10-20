@@ -405,7 +405,7 @@ namespace EDC21HOST
                     {
                         CarA.MazeEntryPos = CarA.Pos;
                     }
-                    else if (!currCarAInMaze && CarA.InMaze)
+                    else if (!currCarAInMaze && CarA.InMaze && !CarA.FinishedMaze)
                     {
                         if (GetDistance(CarA.MazeEntryPos, CarA.Pos) > MinMazeEntryDistance)
                         {
@@ -422,7 +422,7 @@ namespace EDC21HOST
                     {
                         CarB.MazeEntryPos = CarB.Pos;
                     }
-                    else if (!currCarBInMaze && CarB.InMaze)
+                    else if (!currCarBInMaze && CarB.InMaze && !CarB.FinishedMaze)
                     {
                         if (GetDistance(CarB.MazeEntryPos, CarB.Pos) > MinMazeEntryDistance)
                         {
@@ -437,6 +437,28 @@ namespace EDC21HOST
             }
         }
 
+        //更新人员上车
+        public void UpdatePerson()
+        {
+            for (int i = 0; i != CurrPersonNumber; ++i)
+            {
+                Person p = People[i];
+                if (CarA.UnderStop == false && GetDistance(p.StartPos, CarA.Pos) < MaxCarryDistance)
+                {
+                    AddScore(Camp.CampA, Score.PersonGetScore);
+                    CarA.PersonCnt++;
+                    NewPerson(p.StartPos, i);
+                }
+
+                if (CarB.UnderStop == false && GetDistance(p.StartPos, CarB.Pos) < MaxCarryDistance)
+                {
+                    AddScore(Camp.CampB, Score.PersonGetScore);
+                    CarB.PersonCnt++;
+                    NewPerson(p.StartPos, i);
+                }
+            }
+        }
+
         public void Update()//每回合执行
         {
             if (State == GameState.Normal)
@@ -446,29 +468,11 @@ namespace EDC21HOST
                 CheckPersonNumber();
                 UpdateBallsState();
                 UpdateMazeState();
+                UpdatePerson();
                 #region PunishmentPhase
                 //if (!CarDotValid(CarA.Pos)) CarA.Stop();
                 //if (!CarDotValid(CarB.Pos)) CarB.Stop();
                 #endregion
-
-                //人员上车
-                for (int i = 0; i != CurrPersonNumber; ++i)
-                {
-                    Person p = People[i];
-                    if (CarA.UnderStop == false && GetDistance(p.StartPos, CarA.Pos) < MaxCarryDistance)
-                    {
-                        AddScore(Camp.CampA, Score.PersonGetScore);
-                        CarA.PersonCnt++;
-                        NewPerson(p.StartPos, i);
-                    }
-
-                    if (CarB.UnderStop == false && GetDistance(p.StartPos, CarB.Pos) < MaxCarryDistance)
-                    {
-                        AddScore(Camp.CampB, Score.PersonGetScore);
-                        CarB.PersonCnt++;
-                        NewPerson(p.StartPos, i);
-                    }
-                }
 
                 if ((Round >= MaxRound && DebugMode == false) || (Round >= 1000000 && DebugMode == true)) //结束比赛
                 {
