@@ -780,7 +780,7 @@ namespace EDC21HOST
                     ptsList0.Add(c0);
                 centres0.Clear();
             }
-            else ptsList0.Add(new Point2f(-1, -1));
+            // else ptsList0.Add(new Point2f(-1, -1));
             pts0 = ptsList0.ToArray();
 
             if (centres1.Count != 0)
