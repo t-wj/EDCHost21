@@ -161,7 +161,7 @@ namespace EDC21HOST
             byte[] Message = game.PackMessage();
             label_CountDown.Text = Convert.ToString(game.Round);
             if (serial != null && serial.IsOpen)
-                serial.Write(Message, 0, 56);
+                serial.Write(Message, 0, 32);
             ShowMessage(Message);
             validPorts = SerialPort.GetPortNames();
         }
