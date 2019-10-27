@@ -148,10 +148,18 @@ namespace EDC21HOST
         {
             try
             {
-                if (_tracker.serial != null && _tracker.serial.IsOpen)
-                    _tracker.serial.Close();
-                _tracker.serial.PortName = cbPorts.Text;
-                _tracker.serial.Open();
+                if (_tracker.serial != null)
+                {
+                    if (_tracker.serial.IsOpen)
+                        _tracker.serial.Close();
+                    _tracker.serial.PortName = cbPorts.Text;
+                    _tracker.serial.Open();
+                }
+                else
+                {
+                    _tracker.serial = new SerialPort(cbPorts.Text, 115200, Parity.None, 8, StopBits.One);
+                    _tracker.serial.Open();
+                }
             }
             catch (UnauthorizedAccessException)
             {

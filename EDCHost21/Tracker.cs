@@ -37,6 +37,7 @@ namespace EDC21HOST
         private Game game;
         private VideoWriter vw = null;
 
+        private bool alreadySet;
         public SerialPort serial;
         public string[] validPorts;
 
@@ -106,18 +107,19 @@ namespace EDC21HOST
             button_BReset.Enabled = false;
 
             validPorts = SerialPort.GetPortNames();
-            try
-            {
-                if (validPorts.Any())
-                {
-                    serial = new SerialPort(validPorts[0], 115200, Parity.None, 8, StopBits.One);
-                    serial.Open();
-                }
-            }
-            catch (UnauthorizedAccessException)
-            {
+            //try
+            //{
+            //    if (validPorts.Any())
+            //    {
+            //        serial = new SerialPort(validPorts[0], 115200, Parity.None, 8, StopBits.One);
+            //        serial.Open();
+            //    }
+            //}
+            //catch (UnauthorizedAccessException)
+            //{
 
-            }
+            //}
+            alreadySet = false;
 
             //Game.LoadMap();
             game = new Game();
@@ -136,6 +138,15 @@ namespace EDC21HOST
 
         private void Flush()
         {
+            if (!alreadySet)
+            {
+                lock (flags)
+                {
+                    SetWindow st = new SetWindow(ref flags, ref game, this);
+                    st.Show();
+                }
+                alreadySet = true;
+            }
             CameraReading();
             lock (flags)
             {
