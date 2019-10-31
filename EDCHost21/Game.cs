@@ -18,7 +18,7 @@ namespace EDC21HOST
         public const int MazeCrossNum = 6;
         public const int MazeCrossDist = 30;
         public const int MazeBorderPoint1 = 37;
-        public const int MazeBorderPoint2 = MazeBorderPoint1 + MazeCrossDist * (1 + MazeCrossNum);
+        public const int MazeBorderPoint2 = MazeBorderPoint1 + MazeCrossDist * MazeCrossNum;
         public const int MaxCarryDistance = 10; //接上人员的最大距离
         public const int MaxCarBallDistance = 30; //拿到小球的最大距离
         public const int MinBallSept = 6; //小球最小可分辨距离
@@ -87,7 +87,7 @@ namespace EDC21HOST
 
         public static bool InMaze(Dot dot)
         {
-            if (InRegion((i, j) => (i >= MazeBorderPoint1 && i <= MazeBorderPoint2 && j >= MazeBorderPoint1 && j <= MazeBorderPoint2), dot))
+            if (InRegion((i, j) => (i > MazeBorderPoint1 && i < MazeBorderPoint2 && j > MazeBorderPoint1 && j < MazeBorderPoint2), dot))
                 return true;
             else return false;
         }
