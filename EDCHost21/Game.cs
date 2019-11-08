@@ -13,19 +13,19 @@ namespace EDC21HOST
     public class Game
     {
         public bool DebugMode; //调试模式，最大回合数 = 1,000,000
-        public const int MaxSize = 270;
+        public const int MaxSize = 280;
         public const int MaxPersonNum = 2;
         public const int MazeCrossNum = 6;
         public const int MazeCrossDist = 30;
-        public const int MazeBorderPoint1 = 37;
+        public const int MazeBorderPoint1 = 44;
         public const int MazeBorderPoint2 = MazeBorderPoint1 + MazeCrossDist * MazeCrossNum;
         public const int MaxCarryDistance = 10; //接上人员的最大距离
         public const int MaxCarBallDistance = 30; //拿到小球的最大距离
         public const int MinBallSept = 6; //小球最小可分辨距离
         public const int MinGetBallRound = 300; //小车取球的最小时间间隔
         public const int MinMazeEntryDistance = 42; //迷宫两个入口之间的最小距离
-        public const int CollectBoundX = 36;
-        public const int CollectBoundY = 67;
+        public const int CollectBoundX = 43;
+        public const int CollectBoundY = 74;
         public const int StorageBound = 43;
 
         public int APauseNum = 0;

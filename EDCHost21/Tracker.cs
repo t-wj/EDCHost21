@@ -621,7 +621,7 @@ namespace EDC21HOST
             posCarB = new Point2i();
             showSize = new OpenCvSharp.Size(960, 720);
             cameraSize = new OpenCvSharp.Size(1280, 960);
-            logicSize = new OpenCvSharp.Size(270, 270);
+            logicSize = new OpenCvSharp.Size(Game.MaxSize, Game.MaxSize);
             clickCount = 0;
             posPersonStart = new Point2i[Game.MaxPersonNum];
         }
