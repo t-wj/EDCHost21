@@ -26,7 +26,8 @@ namespace EDC21HOST
         public const int MinMazeEntryDistance = 42; //迷宫两个入口之间的最小距离
         public const int CollectBoundX = 43;
         public const int CollectBoundY = 74;
-        public const int StorageBound = 43;
+        public const int StorageBoundX = 43; //A车出发点
+        public const int StorageBoundY = 30;
 
         public int APauseNum = 0;
         public int BPauseNum = 0;
@@ -99,13 +100,13 @@ namespace EDC21HOST
         }
         public static bool InStorageA(Dot dot)
         {
-            if (InRegion((i, j) => (i <= StorageBound && j >= MaxSize - StorageBound), dot))
+            if (InRegion((i, j) => (i <= StorageBoundX && j >= MaxSize - StorageBoundY), dot))
                 return true;
             else return false;
         }
         public static bool InStorageB(Dot dot)
         {
-            if (InRegion((i, j) => (j <= StorageBound && i >= MaxSize - StorageBound), dot))
+            if (InRegion((i, j) => (j <= StorageBoundX && i >= MaxSize - StorageBoundY), dot))
                 return true;
             else return false;
         }
