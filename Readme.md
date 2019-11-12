@@ -1,8 +1,5 @@
 # EDCHost21
-
-- v1.0：实时检测小球是否被小车抓住
-- v2.0：基于小球计数判定得分
-- v3.0：新规则(v1.4)
+**注意：在此页面上方的releases中有最新版的可执行程序。**
 
 ## 从源码编译
 - 测试环境：Microsoft Visual Studio 2017, .NET Framework 4.6。打开EDCHost21.sln后直接生成解决方案即可。
