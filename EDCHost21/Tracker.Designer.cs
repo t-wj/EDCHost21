@@ -64,6 +64,7 @@
             this.label_BMessage = new System.Windows.Forms.Label();
             this.label_AMessage = new System.Windows.Forms.Label();
             this.buttonEnd = new System.Windows.Forms.Button();
+            this.label_Debug = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
             this.SuspendLayout();
             // 
@@ -495,12 +496,23 @@
             this.buttonEnd.UseVisualStyleBackColor = true;
             this.buttonEnd.Click += new System.EventHandler(this.buttonEnd_Click);
             // 
+            // label_Debug
+            // 
+            this.label_Debug.Font = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_Debug.ForeColor = System.Drawing.Color.Black;
+            this.label_Debug.Location = new System.Drawing.Point(70, 845);
+            this.label_Debug.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label_Debug.Name = "label_Debug";
+            this.label_Debug.Size = new System.Drawing.Size(244, 185);
+            this.label_Debug.TabIndex = 102;
+            // 
             // Tracker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(1924, 1055);
+            this.Controls.Add(this.label_Debug);
             this.Controls.Add(this.buttonEnd);
             this.Controls.Add(this.label_AMessage);
             this.Controls.Add(this.label_BMessage);
@@ -579,6 +591,7 @@
         private System.Windows.Forms.Label label_BMessage;
         private System.Windows.Forms.Label label_AMessage;
         private System.Windows.Forms.Button buttonEnd;
+        private System.Windows.Forms.Label label_Debug;
     }
 }
 

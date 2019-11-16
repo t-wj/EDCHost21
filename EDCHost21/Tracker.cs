@@ -345,6 +345,7 @@ namespace EDC21HOST
 
             label_AMessage.Text = $"接到人员数　　{game.CarA.PersonCnt}\n抓取物资数　　{game.CarA.BallGetCnt}\n运回物资数　　{game.CarA.BallOwnCnt}";
             label_BMessage.Text = $"{game.CarB.PersonCnt}　　接到人员数\n{game.CarB.BallGetCnt}　　抓取物资数\n{game.CarB.BallOwnCnt}　　运回物资数";
+            label_Debug.Text = $"A车坐标：({game.CarA.Pos.x}, {game.CarA.Pos.y})\nB车坐标：({game.CarB.Pos.x}, {game.CarB.Pos.y})\n小球坐标：({game.BallDot.x}, {game.BallDot.y})";
             //if (game.CarA.HaveBonus)
             //    label_CarA.Text = "+" + Car.BonusRate.ToString("0%") + "  " + label_CarA.Text;
             //if (game.CarB.HaveBonus)
