@@ -514,9 +514,32 @@ namespace EDC21HOST
             message[messageCnt++] = (byte)CarB.BallGetCnt;
             message[messageCnt++] = (byte)CarA.BallOwnCnt;
             message[messageCnt++] = (byte)CarB.BallOwnCnt;
+            ushort crc = Crc16(message, 28);
+            message[28] = (byte)(crc >> 8);
+            message[29] = (byte)crc;
             message[30] = 0x0D;
             message[31] = 0x0A;
             return message;
+        }
+        ushort Crc16(byte[] data_p, byte length)
+        {
+            byte i, j;
+            ushort crc = 0xffff;
+            const ushort CRC_POLY = 0xa001; //0x8005反序
+
+            for (i = 0; i < length; ++i)
+            {
+                crc ^= (ushort)(0xff & data_p[i]);
+                for (j = 0; j < 8; j++)
+                {
+                    if ((crc & 0x0001) != 0)
+                        crc = (ushort)((crc >> 1) ^ CRC_POLY);
+                    else
+                        crc >>= 1;
+                }
+            }
+            // crc = (crc << 8) | (crc >> 8 & 0xff);
+            return crc;
         }
     }
 }

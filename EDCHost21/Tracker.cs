@@ -195,6 +195,13 @@ namespace EDC21HOST
                         {
                             cc.PeopleFilter(flags);
                             localiser.Locate(videoFrame, flags);
+
+                            //绘制边界点
+                            foreach (Point2f pt in cc.ShowToCamera(ptsShowCorners))
+                            {
+                                Cv2.Line(videoFrame, (int)(pt.X - 3), (int)(pt.Y), (int)(pt.X + 3), (int)(pt.Y), new Scalar(0x00, 0xff, 0x98));
+                                Cv2.Line(videoFrame, (int)(pt.X), (int)(pt.Y - 3), (int)(pt.X), (int)(pt.Y + 3), new Scalar(0x00, 0xff, 0x98));
+                            }
                         }
                         localiser.GetLocations(out ball, out car1, out car2);
 
@@ -268,6 +275,8 @@ namespace EDC21HOST
             {
                 flags.clickCount = 0;
                 flags.calibrated = false;
+                for (int i = 0; i < 4; ++i)
+                    ptsShowCorners[i].X = ptsShowCorners[i].Y = 0;
             }
         }
 
@@ -883,7 +892,7 @@ namespace EDC21HOST
                     centres2.Add(centre);
                 }
 
-                foreach (Point2i c0 in centres0) Cv2.Circle(mat, c0, 1, new Scalar(0x1b, 0xa7, 0xff), -1);
+                foreach (Point2i c0 in centres0) Cv2.Circle(mat, c0, 3, new Scalar(0x1b, 0xa7, 0xff), -1);
                 foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x1b, 0xff, 0xa7), -1);
                 foreach (Point2i c2 in centres2) Cv2.Circle(mat, c2, 10, new Scalar(0x00, 0x98, 0xff), -1);
                 if (localiseFlags.gameState != GameState.Unstart)
