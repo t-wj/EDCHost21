@@ -58,6 +58,8 @@
             this.lblCapture = new System.Windows.Forms.Label();
             this.nudCapture = new System.Windows.Forms.NumericUpDown();
             this.checkBox_ShowMask = new System.Windows.Forms.CheckBox();
+            this.nudBaudRate = new System.Windows.Forms.NumericUpDown();
+            this.lblBaudRate = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudAreaL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudValueL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSat2L)).BeginInit();
@@ -70,13 +72,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudHue0L)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSat0L)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCapture)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBaudRate)).BeginInit();
             this.SuspendLayout();
             // 
             // checkBox_DebugMode
             // 
             this.checkBox_DebugMode.AutoSize = true;
             this.checkBox_DebugMode.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.checkBox_DebugMode.Location = new System.Drawing.Point(499, 286);
+            this.checkBox_DebugMode.Location = new System.Drawing.Point(509, 286);
             this.checkBox_DebugMode.Name = "checkBox_DebugMode";
             this.checkBox_DebugMode.Size = new System.Drawing.Size(91, 24);
             this.checkBox_DebugMode.TabIndex = 74;
@@ -279,7 +282,7 @@
             // button_ConfigSave
             // 
             this.button_ConfigSave.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_ConfigSave.Location = new System.Drawing.Point(510, 34);
+            this.button_ConfigSave.Location = new System.Drawing.Point(520, 34);
             this.button_ConfigSave.Name = "button_ConfigSave";
             this.button_ConfigSave.Size = new System.Drawing.Size(80, 35);
             this.button_ConfigSave.TabIndex = 91;
@@ -290,7 +293,7 @@
             // button_ConfigLoad
             // 
             this.button_ConfigLoad.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_ConfigLoad.Location = new System.Drawing.Point(510, 85);
+            this.button_ConfigLoad.Location = new System.Drawing.Point(520, 78);
             this.button_ConfigLoad.Name = "button_ConfigLoad";
             this.button_ConfigLoad.Size = new System.Drawing.Size(80, 35);
             this.button_ConfigLoad.TabIndex = 92;
@@ -374,7 +377,7 @@
             // 
             this.cbPorts.Font = new System.Drawing.Font("微软雅黑", 9F);
             this.cbPorts.FormattingEnabled = true;
-            this.cbPorts.Location = new System.Drawing.Point(515, 183);
+            this.cbPorts.Location = new System.Drawing.Point(525, 133);
             this.cbPorts.Name = "cbPorts";
             this.cbPorts.Size = new System.Drawing.Size(75, 28);
             this.cbPorts.TabIndex = 99;
@@ -384,7 +387,7 @@
             // 
             this.lblPort.AutoSize = true;
             this.lblPort.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblPort.Location = new System.Drawing.Point(438, 183);
+            this.lblPort.Location = new System.Drawing.Point(438, 133);
             this.lblPort.Name = "lblPort";
             this.lblPort.Size = new System.Drawing.Size(44, 20);
             this.lblPort.TabIndex = 100;
@@ -403,7 +406,7 @@
             // nudCapture
             // 
             this.nudCapture.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.nudCapture.Location = new System.Drawing.Point(515, 231);
+            this.nudCapture.Location = new System.Drawing.Point(525, 231);
             this.nudCapture.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -426,11 +429,47 @@
             this.checkBox_ShowMask.UseVisualStyleBackColor = true;
             this.checkBox_ShowMask.CheckedChanged += new System.EventHandler(this.checkBox_ShowMask_CheckedChanged);
             // 
+            // nudBaudRate
+            // 
+            this.nudBaudRate.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.nudBaudRate.Location = new System.Drawing.Point(525, 183);
+            this.nudBaudRate.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.nudBaudRate.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBaudRate.Name = "nudBaudRate";
+            this.nudBaudRate.Size = new System.Drawing.Size(75, 27);
+            this.nudBaudRate.TabIndex = 106;
+            this.nudBaudRate.Value = new decimal(new int[] {
+            115200,
+            0,
+            0,
+            0});
+            this.nudBaudRate.ValueChanged += new System.EventHandler(this.nudBaudRate_ValueChanged);
+            // 
+            // lblBaudRate
+            // 
+            this.lblBaudRate.AutoSize = true;
+            this.lblBaudRate.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lblBaudRate.Location = new System.Drawing.Point(438, 183);
+            this.lblBaudRate.Name = "lblBaudRate";
+            this.lblBaudRate.Size = new System.Drawing.Size(82, 20);
+            this.lblBaudRate.TabIndex = 105;
+            this.lblBaudRate.Text = "BaudRate:";
+            // 
             // SetWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(626, 345);
+            this.ClientSize = new System.Drawing.Size(645, 345);
+            this.Controls.Add(this.nudBaudRate);
+            this.Controls.Add(this.lblBaudRate);
             this.Controls.Add(this.checkBox_ShowMask);
             this.Controls.Add(this.nudCapture);
             this.Controls.Add(this.lblCapture);
@@ -476,6 +515,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudHue0L)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSat0L)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCapture)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBaudRate)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -513,5 +553,7 @@
         private System.Windows.Forms.Label lblCapture;
         private System.Windows.Forms.NumericUpDown nudCapture;
         private System.Windows.Forms.CheckBox checkBox_ShowMask;
+        private System.Windows.Forms.NumericUpDown nudBaudRate;
+        private System.Windows.Forms.Label lblBaudRate;
     }
 }

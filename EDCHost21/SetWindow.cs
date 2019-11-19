@@ -40,7 +40,10 @@ namespace EDC21HOST
             foreach (string port in _tracker.validPorts)
                 cbPorts.Items.Add(port);
             if (_tracker.serial != null && _tracker.serial.IsOpen)
+            {
                 cbPorts.Text = _tracker.serial.PortName;
+                nudBaudRate.Value = _tracker.serial.BaudRate;
+            }
 
             BringToFront();
         }
@@ -157,7 +160,7 @@ namespace EDC21HOST
                 }
                 else
                 {
-                    _tracker.serial = new SerialPort(cbPorts.Text, 115200, Parity.None, 8, StopBits.One);
+                    _tracker.serial = new SerialPort(cbPorts.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
                     _tracker.serial.Open();
                 }
             }
@@ -190,6 +193,29 @@ namespace EDC21HOST
         private void checkBox_ShowMask_CheckedChanged(object sender, EventArgs e)
         {
             _tracker.flags.showMask = checkBox_ShowMask.Checked;
+        }
+
+        private void nudBaudRate_ValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_tracker.serial != null)
+                {
+                    if (_tracker.serial.IsOpen)
+                        _tracker.serial.Close();
+                    _tracker.serial.BaudRate = (int)nudBaudRate.Value;
+                    _tracker.serial.Open();
+                }
+                else
+                {
+                    _tracker.serial = new SerialPort(cbPorts.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
+                    _tracker.serial.Open();
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+
+            }
         }
     }
 }
