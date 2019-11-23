@@ -256,19 +256,38 @@ namespace EDC21HOST
         {
             State = GameState.End;
             //结算当前半场分数
+            int currBallCntA = 0;
+            foreach (Dot ball in BallsDot)
+                if (InStorageA(ball)) currBallCntA++;
             switch (GameCamp)
             {
                 case Camp.CampA:
+                    //小车成功回家计分
                     if (InStorageA(CarA.Pos))
                         AddScore(Camp.CampA, Score.GetBackScore);
                     if (InStorageB(CarB.Pos))
                         AddScore(Camp.CampB, Score.GetBackScore);
+                    //小球运输至存放点计分
+                    if (currBallCntA > 0 && CarA.HaveBall)
+                    {
+                        AddScore(Camp.CampA, Score.BallStoreScore);
+                        CarA.BallOwnCnt++;
+                        CarA.HaveBall = false;
+                    }
                     break;
                 case Camp.CampB:
+                    //小车成功回家计分
                     if (InStorageB(CarA.Pos))
                         AddScore(Camp.CampA, Score.GetBackScore);
                     if (InStorageA(CarB.Pos))
                         AddScore(Camp.CampB, Score.GetBackScore);
+                    //小球运输至存放点计分
+                    if (currBallCntA > 0 && CarB.HaveBall)
+                    {
+                        AddScore(Camp.CampB, Score.BallStoreScore);
+                        CarB.BallOwnCnt++;
+                        CarB.HaveBall = false;
+                    }
                     break;
                 default: break;
             }
@@ -295,8 +314,8 @@ namespace EDC21HOST
         {
             NoBall = true;
             bool noBallInCollect = true;
-            int currBallCntA = 0;
             Camp currCollectCamp = Camp.None;
+            //int currBallCntA = 0;
             //BallAtCollect = new Dot(0, 0);
             foreach (Dot ball in BallsDot)
             {
@@ -305,7 +324,7 @@ namespace EDC21HOST
                     BallAtCollect = ball;
                     noBallInCollect = false;
                 }
-                else if (InStorageA(ball)) currBallCntA++;
+                //else if (InStorageA(ball)) currBallCntA++;
                 //else if (InStorageB(ball)) currBallCntB++;
 
                 if (!InStorageA(ball))
@@ -376,23 +395,23 @@ namespace EDC21HOST
 
             CollectCamp = currCollectCamp;
 
-            //小球运输至存放点计分
-            if (currBallCntA == BallCntA + 1)
-            {
-                if (GameCamp == Camp.CampA && CarA.HaveBall)
-                {
-                    AddScore(Camp.CampA, Score.BallStoreScore);
-                    CarA.BallOwnCnt++;
-                    CarA.HaveBall = false;
-                }
-                if (GameCamp == Camp.CampB && CarB.HaveBall)
-                {
-                    AddScore(Camp.CampB, Score.BallStoreScore);
-                    CarB.BallOwnCnt++;
-                    CarB.HaveBall = false;
-                }
-            }
-            BallCntA = currBallCntA;
+            ////小球运输至存放点计分
+            //if (currBallCntA == BallCntA + 1)
+            //{
+            //    if (GameCamp == Camp.CampA && CarA.HaveBall)
+            //    {
+            //        AddScore(Camp.CampA, Score.BallStoreScore);
+            //        CarA.BallOwnCnt++;
+            //        CarA.HaveBall = false;
+            //    }
+            //    if (GameCamp == Camp.CampB && CarB.HaveBall)
+            //    {
+            //        AddScore(Camp.CampB, Score.BallStoreScore);
+            //        CarB.BallOwnCnt++;
+            //        CarB.HaveBall = false;
+            //    }
+            //}
+            //BallCntA = currBallCntA;
         }
 
         //更新小车走出迷宫得分
