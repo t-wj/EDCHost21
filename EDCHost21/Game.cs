@@ -167,8 +167,8 @@ namespace EDC21HOST
             GameCamp = Camp.CampA;
             MaxRound = 1200;
             BallsDot = new List<Dot>();
-            BallDot = new Dot(0, 0);
-            BallAtCollect = new Dot(0, 0);
+            BallDot = new Dot(-1, -1);
+            BallAtCollect = new Dot(-1, -1);
             RequestNewBall = false;
             NoBall = false;
             BallCntA = BallCntB = 0;
@@ -178,6 +178,7 @@ namespace EDC21HOST
             People = new Person[MaxPersonNum];
             Round = 0;
             State = GameState.Unstart;
+            Generator = new PersonGenerator(100);
             InitialPerson();
             DebugMode = false;
             FoulTimeFS = null;
@@ -198,6 +199,7 @@ namespace EDC21HOST
             State = GameState.Unstart;
             CarA.LastInCollectRound = -MinGetBallRound;
             CarB.LastInCollectRound = -MinGetBallRound;
+            Generator.ResetIndex();
             InitialPerson();
             DebugMode = false;
             if (FoulTimeFS != null)
@@ -209,8 +211,6 @@ namespace EDC21HOST
 
         protected void InitialPerson() //初始化人员
         {
-            Generator = new PersonGenerator();
-            Generator.Generate(100);
             for (int i = 0; i < MaxPersonNum; ++i)
                 People[i] = new Person();
             for (int i = 0; i < MaxPersonNum; ++i)

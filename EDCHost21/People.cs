@@ -47,23 +47,27 @@ namespace EDC21HOST
     }
     public class PersonGenerator //存储预备要用的人员信息
     {
-        private Stack<Dot> PersonDotStack;
-        public void Generate(int amount) //生成指定数量的人员
+        private Dot[] PersonDotArray;
+        private int Person_idx;
+        private int Person_cnt;
+        public PersonGenerator(int amount) //生成指定数量的人员
         {
-            PersonDotStack = new Stack<Dot>();
+            Person_idx = 0;
+            Person_cnt = amount;
+            PersonDotArray = new Dot[Person_cnt];
             int nextX, nextY;
             Dot dots;
             Random NRand = new Random();
-            for (int i = 0; i != amount; ++i)
+            for (int i = 0; i < Person_cnt; ++i)
             {
                 do
                 {
                     nextX = NRand.Next(Game.MazeCrossNum);
                     nextY = NRand.Next(Game.MazeCrossNum);
                 }
-                while (nextX < nextY); //保证人员出现在左上
+                while (nextX < nextY); //保证人员出现在右上
                 dots = CrossNo2Dot(nextX, nextY);
-                PersonDotStack.Push(dots);
+                PersonDotArray[i] = dots;
             }
         }
         //返回下一个人员的坐标
@@ -73,15 +77,16 @@ namespace EDC21HOST
             bool exist;
             do
             {
-                temp = PersonDotStack.Pop();
+                temp = PersonDotArray[Person_idx++];
                 exist = false;
                 for (int i = 0; i < Game.MaxPersonNum; ++i)
                     if (temp == currentPeople[i].StartPos)
                         exist = true;
             }
-            while (exist);
+            while (exist && Person_idx < Person_cnt);
             return temp;
         }
+        public void ResetIndex() { Person_idx = 0; } //person_idx复位
         public Dot CrossNo2Dot(int CrossNoX, int CrossNoY)
         {
             Dot temp;
