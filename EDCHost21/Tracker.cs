@@ -38,7 +38,7 @@ namespace EDC21HOST
         private VideoWriter vw = null;
 
         private bool alreadySet;
-        public SerialPort serial;
+        public SerialPort serial1, serial2;
         public string[] validPorts;
 
         private string[] gametext = { "上半场", "下半场", "加时1", "加时2",
@@ -159,9 +159,10 @@ namespace EDC21HOST
             }
             byte[] Message = game.PackMessage();
             label_CountDown.Text = Convert.ToString(game.Round);
-            if (serial != null && serial.IsOpen)
-                serial.Write(Message, 0, 32);
-            ShowMessage(Message);
+            if (serial1 != null && serial1.IsOpen)
+                serial1.Write(Message, 0, 32);
+            if (serial2 != null && serial2.IsOpen)
+                serial2.Write(Message, 0, 32); ShowMessage(Message);
             validPorts = SerialPort.GetPortNames();
         }
 
@@ -225,7 +226,7 @@ namespace EDC21HOST
                         timeCamNow = DateTime.Now;
                         TimeSpan timeProcess = timeCamNow - timeCamPrev;
                         timeCamPrev = timeCamNow;
-                        Cv2.Resize(videoFrame, showFrame, flags.showSize, 0, 0, InterpolationFlags.Nearest);
+                        Cv2.Resize(videoFrame, showFrame, flags.showSize, 0, 0, InterpolationFlags.Cubic);
                         BeginInvoke(new Action<Image>(UpdateCameraPicture), BitmapConverter.ToBitmap(showFrame));
                         //输出视频
                         if (flags.videomode == true)
@@ -253,8 +254,10 @@ namespace EDC21HOST
             timer100ms.Stop();
             //threadCamera.Join();
             capture.Release();
-            if (serial != null && serial.IsOpen)
-                serial.Close();
+            if (serial1 != null && serial1.IsOpen)
+                serial1.Close();
+            if (serial2 != null && serial2.IsOpen)
+                serial2.Close();
         }
 
         private void btnReset_Click(object sender, EventArgs e)

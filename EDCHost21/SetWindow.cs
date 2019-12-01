@@ -36,13 +36,33 @@ namespace EDC21HOST
             nudValueL.Value = flags.configs.valueLower;
             nudAreaL.Value = flags.configs.areaLower;
             checkBox_DebugMode.Checked = game.DebugMode;
-            cbPorts.Items.Clear();
+            cbPorts1.Items.Clear();
+            cbPorts1.Items.Add("(None)");
             foreach (string port in _tracker.validPorts)
-                cbPorts.Items.Add(port);
-            if (_tracker.serial != null && _tracker.serial.IsOpen)
+                cbPorts1.Items.Add(port);
+            cbPorts2.Items.Clear();
+            cbPorts2.Items.Add("(None)");
+            foreach (string port in _tracker.validPorts)
+                cbPorts2.Items.Add(port);
+            if (_tracker.serial1 != null && _tracker.serial1.IsOpen)
             {
-                cbPorts.Text = _tracker.serial.PortName;
-                nudBaudRate.Value = _tracker.serial.BaudRate;
+                cbPorts1.Text = _tracker.serial1.PortName;
+                nudBaudRate.Value = _tracker.serial1.BaudRate;
+            }
+            else
+            {
+                cbPorts1.Text = "(None)";
+                nudBaudRate.Value = 115200;
+            }
+            if (_tracker.serial2 != null && _tracker.serial2.IsOpen)
+            {
+                cbPorts2.Text = _tracker.serial2.PortName;
+                nudBaudRate.Value = _tracker.serial2.BaudRate;
+            }
+            else
+            {
+                cbPorts2.Text = "(None)";
+                nudBaudRate.Value = 115200;
             }
 
             BringToFront();
@@ -142,34 +162,6 @@ namespace EDC21HOST
             }
         }
 
-        private void cbPorts_TextUpdate(object sender, EventArgs e)
-        {
-
-        }
-
-        private void cbPorts_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_tracker.serial != null)
-                {
-                    if (_tracker.serial.IsOpen)
-                        _tracker.serial.Close();
-                    _tracker.serial.PortName = cbPorts.Text;
-                    _tracker.serial.Open();
-                }
-                else
-                {
-                    _tracker.serial = new SerialPort(cbPorts.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
-                    _tracker.serial.Open();
-                }
-            }
-            catch (UnauthorizedAccessException)
-            {
-
-            }
-        }
-
         private void nudCapture_ValueChanged(object sender, EventArgs e)
         {
             VideoCapture tmpCamture = new VideoCapture((int)nudCapture.Value);
@@ -199,22 +191,109 @@ namespace EDC21HOST
         {
             try
             {
-                if (_tracker.serial != null)
+                if (_tracker.serial1 != null)
                 {
-                    if (_tracker.serial.IsOpen)
-                        _tracker.serial.Close();
-                    _tracker.serial.BaudRate = (int)nudBaudRate.Value;
-                    _tracker.serial.Open();
+                    if (_tracker.serial1.IsOpen)
+                        _tracker.serial1.Close();
+                    _tracker.serial1.BaudRate = (int)nudBaudRate.Value;
+                    _tracker.serial1.Open();
                 }
                 else
                 {
-                    _tracker.serial = new SerialPort(cbPorts.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
-                    _tracker.serial.Open();
+                    _tracker.serial1 = new SerialPort(cbPorts1.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
+                    _tracker.serial1.Open();
                 }
             }
             catch (UnauthorizedAccessException)
             {
 
+            }
+            try
+            {
+                if (_tracker.serial2 != null)
+                {
+                    if (_tracker.serial2.IsOpen)
+                        _tracker.serial2.Close();
+                    _tracker.serial2.BaudRate = (int)nudBaudRate.Value;
+                    _tracker.serial2.Open();
+                }
+                else
+                {
+                    _tracker.serial2 = new SerialPort(cbPorts2.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
+                    _tracker.serial2.Open();
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+
+            }
+        }
+
+        private void cbPorts2_TextChanged(object sender, EventArgs e)
+        {
+            if (cbPorts2.Text == "(None)")
+            {
+                if (_tracker.serial2 != null)
+                {
+                    if (_tracker.serial2.IsOpen)
+                        _tracker.serial2.Close();
+                }
+            }
+            else
+            {
+                try
+                {
+                    if (_tracker.serial2 != null)
+                    {
+                        if (_tracker.serial2.IsOpen)
+                            _tracker.serial2.Close();
+                        _tracker.serial2.PortName = cbPorts2.Text;
+                        _tracker.serial2.Open();
+                    }
+                    else
+                    {
+                        _tracker.serial2 = new SerialPort(cbPorts2.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
+                        _tracker.serial2.Open();
+                    }
+                }
+                catch (UnauthorizedAccessException)
+                {
+
+                }
+            }
+        }
+
+        private void cbPorts1_TextChanged(object sender, EventArgs e)
+        {
+            if (cbPorts1.Text == "(None)")
+            {
+                if (_tracker.serial1 != null)
+                {
+                    if (_tracker.serial1.IsOpen)
+                        _tracker.serial1.Close();
+                }
+            }
+            else
+            {
+                try
+                {
+                    if (_tracker.serial1 != null)
+                    {
+                        if (_tracker.serial1.IsOpen)
+                            _tracker.serial1.Close();
+                        _tracker.serial1.PortName = cbPorts1.Text;
+                        _tracker.serial1.Open();
+                    }
+                    else
+                    {
+                        _tracker.serial1 = new SerialPort(cbPorts1.Text, (int)nudBaudRate.Value, Parity.None, 8, StopBits.One);
+                        _tracker.serial1.Open();
+                    }
+                }
+                catch (UnauthorizedAccessException)
+                {
+
+                }
             }
         }
     }

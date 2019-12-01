@@ -53,13 +53,15 @@
             this.lblHue0L = new System.Windows.Forms.Label();
             this.nudSat0L = new System.Windows.Forms.NumericUpDown();
             this.lblSat0L = new System.Windows.Forms.Label();
-            this.cbPorts = new System.Windows.Forms.ComboBox();
-            this.lblPort = new System.Windows.Forms.Label();
+            this.cbPorts1 = new System.Windows.Forms.ComboBox();
+            this.lblPort1 = new System.Windows.Forms.Label();
             this.lblCapture = new System.Windows.Forms.Label();
             this.nudCapture = new System.Windows.Forms.NumericUpDown();
             this.checkBox_ShowMask = new System.Windows.Forms.CheckBox();
             this.nudBaudRate = new System.Windows.Forms.NumericUpDown();
             this.lblBaudRate = new System.Windows.Forms.Label();
+            this.lblPort2 = new System.Windows.Forms.Label();
+            this.cbPorts2 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.nudAreaL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudValueL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSat2L)).BeginInit();
@@ -282,9 +284,9 @@
             // button_ConfigSave
             // 
             this.button_ConfigSave.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_ConfigSave.Location = new System.Drawing.Point(520, 34);
+            this.button_ConfigSave.Location = new System.Drawing.Point(442, 34);
             this.button_ConfigSave.Name = "button_ConfigSave";
-            this.button_ConfigSave.Size = new System.Drawing.Size(80, 35);
+            this.button_ConfigSave.Size = new System.Drawing.Size(67, 35);
             this.button_ConfigSave.TabIndex = 91;
             this.button_ConfigSave.Text = "保存";
             this.button_ConfigSave.UseVisualStyleBackColor = true;
@@ -293,9 +295,9 @@
             // button_ConfigLoad
             // 
             this.button_ConfigLoad.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button_ConfigLoad.Location = new System.Drawing.Point(520, 78);
+            this.button_ConfigLoad.Location = new System.Drawing.Point(533, 34);
             this.button_ConfigLoad.Name = "button_ConfigLoad";
-            this.button_ConfigLoad.Size = new System.Drawing.Size(80, 35);
+            this.button_ConfigLoad.Size = new System.Drawing.Size(67, 35);
             this.button_ConfigLoad.TabIndex = 92;
             this.button_ConfigLoad.Text = "读取";
             this.button_ConfigLoad.UseVisualStyleBackColor = true;
@@ -373,25 +375,25 @@
             this.lblSat0L.TabIndex = 97;
             this.lblSat0L.Text = "Sat0L:";
             // 
-            // cbPorts
+            // cbPorts1
             // 
-            this.cbPorts.Font = new System.Drawing.Font("微软雅黑", 9F);
-            this.cbPorts.FormattingEnabled = true;
-            this.cbPorts.Location = new System.Drawing.Point(525, 133);
-            this.cbPorts.Name = "cbPorts";
-            this.cbPorts.Size = new System.Drawing.Size(75, 28);
-            this.cbPorts.TabIndex = 99;
-            this.cbPorts.TextChanged += new System.EventHandler(this.cbPorts_TextChanged);
+            this.cbPorts1.Font = new System.Drawing.Font("微软雅黑", 9F);
+            this.cbPorts1.FormattingEnabled = true;
+            this.cbPorts1.Location = new System.Drawing.Point(525, 82);
+            this.cbPorts1.Name = "cbPorts1";
+            this.cbPorts1.Size = new System.Drawing.Size(75, 28);
+            this.cbPorts1.TabIndex = 99;
+            this.cbPorts1.TextChanged += new System.EventHandler(this.cbPorts1_TextChanged);
             // 
-            // lblPort
+            // lblPort1
             // 
-            this.lblPort.AutoSize = true;
-            this.lblPort.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblPort.Location = new System.Drawing.Point(438, 133);
-            this.lblPort.Name = "lblPort";
-            this.lblPort.Size = new System.Drawing.Size(44, 20);
-            this.lblPort.TabIndex = 100;
-            this.lblPort.Text = "Port:";
+            this.lblPort1.AutoSize = true;
+            this.lblPort1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lblPort1.Location = new System.Drawing.Point(438, 82);
+            this.lblPort1.Name = "lblPort1";
+            this.lblPort1.Size = new System.Drawing.Size(53, 20);
+            this.lblPort1.TabIndex = 100;
+            this.lblPort1.Text = "Port1:";
             // 
             // lblCapture
             // 
@@ -463,18 +465,40 @@
             this.lblBaudRate.TabIndex = 105;
             this.lblBaudRate.Text = "BaudRate:";
             // 
+            // lblPort2
+            // 
+            this.lblPort2.AutoSize = true;
+            this.lblPort2.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lblPort2.Location = new System.Drawing.Point(438, 132);
+            this.lblPort2.Name = "lblPort2";
+            this.lblPort2.Size = new System.Drawing.Size(53, 20);
+            this.lblPort2.TabIndex = 108;
+            this.lblPort2.Text = "Port2:";
+            // 
+            // cbPorts2
+            // 
+            this.cbPorts2.Font = new System.Drawing.Font("微软雅黑", 9F);
+            this.cbPorts2.FormattingEnabled = true;
+            this.cbPorts2.Location = new System.Drawing.Point(525, 132);
+            this.cbPorts2.Name = "cbPorts2";
+            this.cbPorts2.Size = new System.Drawing.Size(75, 28);
+            this.cbPorts2.TabIndex = 107;
+            this.cbPorts2.TextChanged += new System.EventHandler(this.cbPorts2_TextChanged);
+            // 
             // SetWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(645, 345);
+            this.Controls.Add(this.lblPort2);
+            this.Controls.Add(this.cbPorts2);
             this.Controls.Add(this.nudBaudRate);
             this.Controls.Add(this.lblBaudRate);
             this.Controls.Add(this.checkBox_ShowMask);
             this.Controls.Add(this.nudCapture);
             this.Controls.Add(this.lblCapture);
-            this.Controls.Add(this.lblPort);
-            this.Controls.Add(this.cbPorts);
+            this.Controls.Add(this.lblPort1);
+            this.Controls.Add(this.cbPorts1);
             this.Controls.Add(this.nudSat0L);
             this.Controls.Add(this.lblSat0L);
             this.Controls.Add(this.nudHue0H);
@@ -548,12 +572,14 @@
         private System.Windows.Forms.Label lblHue0L;
         private System.Windows.Forms.NumericUpDown nudSat0L;
         private System.Windows.Forms.Label lblSat0L;
-        private System.Windows.Forms.ComboBox cbPorts;
-        private System.Windows.Forms.Label lblPort;
+        private System.Windows.Forms.ComboBox cbPorts1;
+        private System.Windows.Forms.Label lblPort1;
         private System.Windows.Forms.Label lblCapture;
         private System.Windows.Forms.NumericUpDown nudCapture;
         private System.Windows.Forms.CheckBox checkBox_ShowMask;
         private System.Windows.Forms.NumericUpDown nudBaudRate;
         private System.Windows.Forms.Label lblBaudRate;
+        private System.Windows.Forms.Label lblPort2;
+        private System.Windows.Forms.ComboBox cbPorts2;
     }
 }
