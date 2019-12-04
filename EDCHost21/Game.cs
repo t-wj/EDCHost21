@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace EDC21HOST
 {
-    public enum Score { PersonGetScore, BallGetScore, BallStoreScore, BallCollectScore, GoOutOfMaze, GetBackScore, Foul1, Foul2 };
+    public enum Score { PersonGetScore, BallGetScore, BallStoreScore, BallCollectScore, GoOutOfMaze, GetBackScore, Foul1, Foul2, PauseScore };
     public enum GameState { Unstart = 0, Normal = 1, Pause = 2, End = 3 };
     public class Game
     {
@@ -67,8 +67,9 @@ namespace EDC21HOST
                 case Score.PersonGetScore: scoreGet = (c == GameCamp) ? 0 : 15; break; //小车救起被困人员
                 case Score.GetBackScore: scoreGet = 20; break; //比赛结束时，小车回到己方出发点
 
-                case Score.Foul1: scoreGet = -10; break;  //失误
-                case Score.Foul2: scoreGet = -50; break;  //犯规
+                case Score.PauseScore: scoreGet = -80; break;  //复位
+                case Score.Foul1: scoreGet = -10; break;  //失误：小车逆行
+                case Score.Foul2: scoreGet = -100; break;  //犯规：小车撞倒障碍物等
                 default: break;
             }
 
@@ -207,6 +208,8 @@ namespace EDC21HOST
                 byte[] data = Encoding.Default.GetBytes($"nextStage\r\n");
                 FoulTimeFS.Write(data, 0, data.Length);
             }
+            CarA.SaveCnt();
+            CarB.SaveCnt();
         }
 
         protected void InitialPerson() //初始化人员
@@ -247,8 +250,8 @@ namespace EDC21HOST
             State = GameState.Pause;
             CarA.LastInCollectRound = -MinGetBallRound;
             CarB.LastInCollectRound = -MinGetBallRound;
-            CarA.HaveBall = false;
-            CarB.HaveBall = false;
+            //CarA.HaveBall = false;
+            //CarB.HaveBall = false;
             CarA.Stop();
             CarB.Stop();
         }
@@ -296,15 +299,20 @@ namespace EDC21HOST
         public void AskPause(Camp c)
         {
             Pause();
-            Round -= 50;
-            if (Round < 0) Round = 0;
+            CarA.HaveBall = false;
+            CarB.HaveBall = false;
+            CarA.LoadCnt();
+            CarB.LoadCnt();
+            Round = 0;
             switch (c)
             {
                 case Camp.CampA:
                     ++APauseNum;
+                    AddScore(Camp.CampA, Score.PauseScore);
                     break;
                 case Camp.CampB:
                     ++BPauseNum;
+                    AddScore(Camp.CampB, Score.PauseScore);
                     break;
             }
         }
