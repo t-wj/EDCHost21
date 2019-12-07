@@ -77,11 +77,11 @@ namespace EDC21HOST
             {
                 case Camp.CampA:
                     CarA.Score += scoreGet;
-                    if (CarA.Score < 0) CarA.Score = 0;
+                    //if (CarA.Score < 0) CarA.Score = 0;
                     return;
                 case Camp.CampB:
                     CarB.Score += scoreGet;
-                    if (CarB.Score < 0) CarB.Score = 0;
+                    //if (CarB.Score < 0) CarB.Score = 0;
                     return;
                 default: return;
             }
@@ -242,6 +242,8 @@ namespace EDC21HOST
             CarB.LastInCollectRound = -MinGetBallRound;
             CarA.HaveBall = false;
             CarB.HaveBall = false;
+            CarA.FinishedMaze = false;
+            CarB.FinishedMaze = false;
             CarA.Start();
             CarB.Start();
         }

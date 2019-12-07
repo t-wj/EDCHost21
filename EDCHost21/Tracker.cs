@@ -345,7 +345,7 @@ namespace EDC21HOST
 
             label_AMessage.Text = $"接到人员数　　{game.CarA.PersonCnt}\n抓取物资数　　{game.CarA.BallGetCnt}\n运回物资数　　{game.CarA.BallOwnCnt}";
             label_BMessage.Text = $"{game.CarB.PersonCnt}　　接到人员数\n{game.CarB.BallGetCnt}　　抓取物资数\n{game.CarB.BallOwnCnt}　　运回物资数";
-            label_Debug.Text = $"A车坐标： ({game.CarA.Pos.x}, {game.CarA.Pos.y})\nB车坐标： ({game.CarB.Pos.x}, {game.CarB.Pos.y})\n小球坐标：({game.BallDot.x}, {game.BallDot.y})";
+            label_Debug.Text = $"A车坐标： ({game.CarA.Pos.x}, {game.CarA.Pos.y})\nB车坐标： ({game.CarB.Pos.x}, {game.CarB.Pos.y})";
             //if (game.CarA.HaveBonus)
             //    label_CarA.Text = "+" + Car.BonusRate.ToString("0%") + "  " + label_CarA.Text;
             //if (game.CarB.HaveBonus)
@@ -528,6 +528,44 @@ namespace EDC21HOST
             {
                 byte[] data = Encoding.Default.GetBytes($"B -50 {game.Round}\r\n");
                 game.FoulTimeFS.Write(data, 0, data.Length);
+            }
+        }
+
+        private void label_AMessage_Click(object sender, EventArgs e)
+        {
+            if (game.State == GameState.Normal)
+            {
+                game.AddScore(Camp.CampA, Score.BallGetScore);
+                game.CarA.BallGetCnt++;
+                game.CarA.HaveBall = true;
+            }
+            else if (game.State == GameState.End)
+            {
+                if (game.CarA.HaveBall)
+                {
+                    game.AddScore(Camp.CampA, Score.BallStoreScore);
+                    game.CarA.BallOwnCnt++;
+                    game.CarA.HaveBall = false;
+                }
+            }
+        }
+
+        private void label_BMessage_Click(object sender, EventArgs e)
+        {
+            if (game.State == GameState.Normal)
+            {
+                game.AddScore(Camp.CampB, Score.BallGetScore);
+                game.CarB.BallGetCnt++;
+                game.CarB.HaveBall = true;
+            }
+            else if (game.State == GameState.End)
+            {
+                if (game.CarB.HaveBall)
+                {
+                    game.AddScore(Camp.CampB, Score.BallStoreScore);
+                    game.CarB.BallOwnCnt++;
+                    game.CarB.HaveBall = false;
+                }
             }
         }
 
@@ -859,7 +897,7 @@ namespace EDC21HOST
                     centre.X = (int)(moments.M10 / moments.M00);
                     centre.Y = (int)(moments.M01 / moments.M00);
                     double area = moments.M00;
-                    if (area <= configs.areaLower / 4) continue;
+                    if (area <= configs.areaLower / 9) continue;
                     centres0.Add(centre);
                 }
                 foreach (Point2i[] c1 in contours1)
@@ -883,16 +921,16 @@ namespace EDC21HOST
                     centres2.Add(centre);
                 }
 
-                foreach (Point2i c0 in centres0) Cv2.Circle(mat, c0, 3, new Scalar(0x1b, 0xa7, 0xff), -1);
-                foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x1b, 0xff, 0xa7), -1);
-                foreach (Point2i c2 in centres2) Cv2.Circle(mat, c2, 10, new Scalar(0x00, 0x98, 0xff), -1);
+                //foreach (Point2i c0 in centres0) Cv2.Circle(mat, c0, 3, new Scalar(0x1b, 0xa7, 0xff), -1);
+                foreach (Point2i c1 in centres1) Cv2.Circle(mat, c1, 10, new Scalar(0x3c, 0x14, 0xdc), -1);
+                foreach (Point2i c2 in centres2) Cv2.Circle(mat, c2, 10, new Scalar(0xff, 0x00, 0x00), -1);
                 if (localiseFlags.gameState != GameState.Unstart)
                 {
                     for (int i = 0; i < localiseFlags.currPersonNum; ++i)
                     {
                         int x10 = localiseFlags.posPersonStart[i].X - 8;
                         int y10 = localiseFlags.posPersonStart[i].Y - 8;
-                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0xf3, 0x96, 0x21), -1);
+                        Cv2.Rectangle(mat, new Rect(x10, y10, 16, 16), new Scalar(0x00, 0xff, 0x00), -1);
                     }
                 }
 

@@ -469,6 +469,7 @@
             this.label_BMessage.Size = new System.Drawing.Size(270, 120);
             this.label_BMessage.TabIndex = 99;
             this.label_BMessage.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label_BMessage.Click += new System.EventHandler(this.label_BMessage_Click);
             // 
             // label_AMessage
             // 
@@ -481,6 +482,7 @@
             this.label_AMessage.Size = new System.Drawing.Size(270, 120);
             this.label_AMessage.TabIndex = 100;
             this.label_AMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label_AMessage.Click += new System.EventHandler(this.label_AMessage_Click);
             // 
             // buttonEnd
             // 
